@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import type { RouteObject } from "react-router-dom";
 import type { ComponentType, ReactNode } from "react";
-import { publicRoutes } from "./router";
+import { publicRoutes } from "./routes";
 import MainLayout from "../layouts/MainLayout";
 
 type LayoutType = ComponentType<{ children: ReactNode }> | null;
@@ -23,9 +23,7 @@ const RouteWithLayout = ({
 const AppRoutes = (): RouteObject[] => {
   return publicRoutes.map((route) => ({
     ...route,
-    element: (
-      <RouteWithLayout element={route.element} layout={route.layout} />
-    ),
+    element: <RouteWithLayout element={route.element} layout={route.layout} />,
   }));
 };
 

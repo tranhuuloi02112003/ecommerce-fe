@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import Header from "./Header/Header";
-import Footer from "./Footer/Footer";
+import Header from "./MainLayout/Header";
+import Footer from "./MainLayout/Footer";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -8,9 +8,9 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen w-full">
       <Header />
-      <main className="flex-grow container mx-auto p-4">{children}</main>
+      <main className="flex-grow w-full">{children}</main>
       <Footer />
     </div>
   );
