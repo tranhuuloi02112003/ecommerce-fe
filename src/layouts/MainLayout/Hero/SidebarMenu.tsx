@@ -1,4 +1,5 @@
 const categories = [
+
   "Women's Fashion",
   "Men's Fashion",
   "Electronics",
@@ -12,7 +13,7 @@ const categories = [
 
 const SidebarMenu = () => {
   return (
-    <nav className="border-t-[16px] border-transparent mr-[4px] w-[217px] border-r-[1px] border-r-gray-200">
+    <nav className="mr-[4px] w-[217px] border-r-[1px] border-r-gray-200 -mt-[var(--spacing-hero-block)] pt-[var(--spacing-hero-block)]">
       <ul className="space-y-4">
         {categories.map((cat, i) => (
           <li key={i}>

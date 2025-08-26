@@ -1,8 +1,6 @@
 import { useState } from "react";
 
-import searchIcon from "@/assets/icon/search.svg";
-import cartIcon from "@/assets/icon/cart.svg";
-import wishListIcon from "@/assets/icon/wish-list.svg";
+import { searchIcon, cartIcon, wishListIcon } from "@/assets/icons";
 
 const Header = () => {
   const [search, setSearch] = useState("");
