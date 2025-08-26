@@ -1,4 +1,4 @@
-import HomePage from "../pages/Home";
+import HomePage from "../pages/Home/Home";
 import NotFoundPage from "../pages/NotFound";
 import routes from "../config/routes";
 import type { ComponentType, ReactNode } from "react";

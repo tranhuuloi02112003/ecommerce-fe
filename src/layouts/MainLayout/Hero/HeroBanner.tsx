@@ -13,7 +13,7 @@ const HeroBanner = () => {
       modules={[Pagination, Autoplay]}
       pagination={{
         clickable: true,
-        renderBullet: (index, className) => {
+        renderBullet: (className) => {
           return `<span class="${className} !w-3 !h-3 !bg-gray-400 rounded-full inline-block"></span>`;
         },
       }}
