@@ -42,14 +42,12 @@ const Button = ({
   }
 
   const baseClasses =
-    "inline-flex items-center justify-center h-[56px] font-medium text-[1.6rem] leading-normal";
+    "cursor-pointer inline-flex items-center justify-center h-[56px] font-medium text-[1.6rem] leading-normal hover:opacity-90";
 
   const variantClasses = {
-    // primary: "bg-red",
-    // outline: "",
-    primary: "bg-[var(--primary)] text-white rounded-[4px]",
+    primary: "bg-primary text-white rounded-[4px]",
     outline: "border border-black/40 rounded-[4px]",
-    text: "bg-transparent text-[var(--primary)] font-normal",
+    text: "bg-transparent text-primary font-normal",
   };
 
   const classes = clsx(

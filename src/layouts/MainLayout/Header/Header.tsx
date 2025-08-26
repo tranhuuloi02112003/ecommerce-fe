@@ -49,8 +49,8 @@ const Header = () => {
           </div>
           {/* Actions */}
           <div className="flex items-center gap-4 text-xl">
-            <img className="ml-[24px] mr-[16px]" src={wishListIcon} alt="wishlist icon" />
-            <img src={cartIcon} alt="cart icon" />
+            <img className="ml-[24px] mr-[16px] cursor-pointer" src={wishListIcon} alt="wishlist icon" />
+            <img className="cursor-pointer" src={cartIcon} alt="cart icon" />
           </div>
         </div>
       </div>
