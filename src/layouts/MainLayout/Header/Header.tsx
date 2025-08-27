@@ -1,7 +1,7 @@
 import { useState } from "react";
-
-import { searchIcon, cartIcon, wishListIcon } from "@/assets/icons";
 import { Link } from "react-router-dom";
+
+import { HeartIcon, CartIcon, SearchIcon } from "@/components/icons";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -38,7 +38,7 @@ const Header = () => {
         {/* Search + Actions */}
         <div className="flex items-center">
           {/* Search */}
-          <div className="flex bg-[#F5F5F5] py-[7px] pr-[12px] pl-[20px]">
+          <div className="flex items-center bg-[#F5F5F5] py-[7px] pr-[12px] pl-[20px]">
             <input
               type="text"
               value={search}
@@ -46,12 +46,12 @@ const Header = () => {
               placeholder="What are you looking for?"
               className="rounded-md p-2"
             />
-            <img src={searchIcon} alt="search icon" />
+            <SearchIcon className="cursor-pointer" />
           </div>
           {/* Actions */}
           <div className="flex items-center gap-4 text-xl">
-            <img className="ml-[24px] mr-[16px] cursor-pointer" src={wishListIcon} alt="wishlist icon" />
-            <img className="cursor-pointer" src={cartIcon} alt="cart icon" />
+            <HeartIcon className="ml-[18px] mr-[12px] cursor-pointer" />
+            <CartIcon size={24} color="#000" className="cursor-pointer" />
           </div>
         </div>
       </div>

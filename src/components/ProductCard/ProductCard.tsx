@@ -1,5 +1,5 @@
 import type { Product } from "../../types/product";
-import { wishListIcon } from "@/assets/icons";
+import { HeartIcon } from "@/components/icons";
 
 type ProductCardProps = {
   product: Product;
@@ -38,7 +38,7 @@ const ProductCard = ({
           </span>
         )}
         <span className="flex items-center justify-center absolute top-[12px] right-[12px] p-3 rounded-full bg-white shadow-sm">
-          <img src={wishListIcon} alt="Favourite Icon" className="size-6" />
+          <HeartIcon className="size-[24px]" />
         </span>
 
         <img

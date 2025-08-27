@@ -1,6 +1,3 @@
-export { default as searchIcon } from "./search.svg";
-export { default as cartIcon } from "./cart.svg";
-export { default as wishListIcon } from "./wish-list.svg";
 export { default as appleLogoIcon } from "./apple-logo.svg";
 export { default as categoryPhonesIcon } from "./category-cellPhone.svg";
 export { default as categoryComputersIcon } from "./category-computer.svg";

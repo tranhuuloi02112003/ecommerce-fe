@@ -4,6 +4,7 @@ import PromoBanner from "./PromoBanner/PromoBanner";
 import SellingProduct from "./SellingProduct/SellingProduct";
 import ExploreProducts from "./ExploreProducts/ExploreProduct";
 import NewArrival from "./NewArrival/NewArrival"; 
+import ServiceHighlight from "../../components/ServiceHighlight/ServiceHighlight";
 
 const HomePage = () => {
   return (
@@ -14,6 +15,7 @@ const HomePage = () => {
       <PromoBanner />
       <ExploreProducts />
       <NewArrival />
+      <ServiceHighlight/>
     </>
   );
 };
