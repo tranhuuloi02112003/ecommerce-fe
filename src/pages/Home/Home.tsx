@@ -3,6 +3,7 @@ import FlashSaleSection from "./FlashSale/FlashSale";
 import PromoBanner from "./PromoBanner/PromoBanner";
 import SellingProduct from "./SellingProduct/SellingProduct";
 import ExploreProducts from "./ExploreProducts/ExploreProduct";
+import NewArrival from "./NewArrival/NewArrival"; 
 
 const HomePage = () => {
   return (
@@ -12,6 +13,7 @@ const HomePage = () => {
       <SellingProduct />
       <PromoBanner />
       <ExploreProducts />
+      <NewArrival />
     </>
   );
 };

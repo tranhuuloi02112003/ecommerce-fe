@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { searchIcon, cartIcon, wishListIcon } from "@/assets/icons";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -11,9 +12,9 @@ const Header = () => {
         <span>
           Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!
         </span>
-        <a className="ml-5 underline decoration-1 underline-offset-2" href="#">
+        <Link className="ml-5 underline decoration-1 underline-offset-2" to="#">
           Shop Now
-        </a>
+        </Link>
       </div>
       {/* Main header */}
       <div className="app-container items-center justify-between mt-[30px] mb-[16px] flex w-full">
@@ -21,18 +22,18 @@ const Header = () => {
         <div className="font-inter text-[24px] mr-[190px]">Exclusive</div>
         {/* Nav */}
         <nav className="flex items-center gap-[48px] ">
-          <a href="#" className="hover:text-primary">
+          <Link to="#" className="hover:text-primary">
             Home
-          </a>
-          <a href="#" className="hover:text-primary">
+          </Link>
+          <Link to="#" className="hover:text-primary">
             Contact
-          </a>
-          <a href="#" className="hover:text-primary">
+          </Link>
+          <Link to="#" className="hover:text-primary">
             About
-          </a>
-          <a href="#" className="hover:text-primary">
+          </Link>
+          <Link to="#" className="hover:text-primary">
             Sign up
-          </a>
+          </Link>
         </nav>
         {/* Search + Actions */}
         <div className="flex items-center">

@@ -11,8 +11,7 @@ import Button from "@/components/Button";
 
 const ExploreProducts = () => {
   return (
-    <section className="app-container pt-[75px]">
-      <div className="border-b border-black/30 pb-[70px]">
+    <section className="app-container py-[75px]">
         {/* === Header Section === */}
         <SectionHeader
           label="Our Products"
@@ -58,7 +57,6 @@ const ExploreProducts = () => {
         <div className="mt-10 text-center">
           <Button className="w-[234px]">View All Products</Button>
         </div>
-      </div>
     </section>
   );
 };

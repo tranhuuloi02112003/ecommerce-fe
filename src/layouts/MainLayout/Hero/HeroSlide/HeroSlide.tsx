@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 interface HeroSlideProps {
   icon?: string;
   smallTitle?: string;
@@ -30,9 +32,9 @@ const HeroSlide = ({
         <h2 className="font-inter mb-[22px] tracking-[1.92px] text-[42px] font-semibold leading-tight">
           {title}
         </h2>
-        <button className="flex items-center gap-2 border-b border-white hover:text-gray-300">
+        <Link to="#" className="flex items-center gap-2 underline decoration-1 underline-offset-2">
           {ctaText}
-        </button>
+        </Link>
       </div>
       {/*  Right image */}
       <div className="flex-1 flex justify-center">
