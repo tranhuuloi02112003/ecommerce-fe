@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import ProductCard from "@/components/ProductCard";
-import { mockProductsFlashSale } from "@/mock/products";
+import { mockProducts } from "@/mock/products";
 import "swiper/css";
 
 import Countdown from "@/components/Countdown/Countdown";
@@ -48,7 +48,7 @@ const FlashSale = () => {
               1280: { slidesPerView: 4.3, spaceBetween: 25 },
             }}
           >
-            {mockProductsFlashSale.map((p) => (
+            {mockProducts.map((p) => (
               <SwiperSlide key={p.id}>
                 <ProductCard product={p} />
               </SwiperSlide>

@@ -1,6 +1,6 @@
 import type { Product } from "../types/product";
 
-export const mockProductsFlashSale: Product[] = [
+export const mockProducts: Product[] = [
   {
     id: "1",
     name: "HAVIT HV-G92 Gamepad",
