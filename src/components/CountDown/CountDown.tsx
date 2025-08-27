@@ -24,20 +24,28 @@ export default function Countdown({ target, className }: Props) {
   const seconds = Math.floor((msLeft % 60_000) / 1_000);
 
   const Block = ({ label, value }: { label: string; value: string }) => (
-    <div className="text-center">
-      <div className="text-[12px]">{label}</div>
-      <div className="text-[32px] font-bold tracking-[1.28px]">{value}</div>
+    <div className="countdown-block text-center flex flex-col justify-center">
+      <div className="countdown-label text-[12px]">{label}</div>
+      <div className="countdown-value text-[32px] font-bold tracking-[1.28px]">
+        {value}
+      </div>
     </div>
   );
 
   return (
     <div className={`flex items-end gap-3 ${className ?? ""}`}>
       <Block label="Days" value={pad(days)} />
-      <span className="text-red-500 font-semibold self-center mb-1">:</span>
+      <span className="separator text-red-500 font-semibold self-center mb-1">
+        :
+      </span>
       <Block label="Hours" value={pad(hours)} />
-      <span className="text-red-500 font-semibold self-center mb-1">:</span>
+      <span className="separator text-red-500 font-semibold self-center mb-1">
+        :
+      </span>
       <Block label="Minutes" value={pad(minutes)} />
-      <span className="text-red-500 font-semibold self-center mb-1">:</span>
+      <span className="separator text-red-500 font-semibold self-center mb-1">
+        :
+      </span>
       <Block label="Seconds" value={pad(seconds)} />
     </div>
   );

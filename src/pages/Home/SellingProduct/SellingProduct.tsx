@@ -7,7 +7,7 @@ const SellingProduct = () => {
   const bestSellingProducts = mockProducts.slice(0, 4);
 
   return (
-    <section className="app-container pt-[75px] pb-[130px]">
+    <section className="app-container pt-[75px] pb-[30px]">
         <SectionHeader
           label="This Month"
           title="Best Selling Products"

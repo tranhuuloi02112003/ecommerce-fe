@@ -4,7 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import { mockProducts } from "@/mock/products";
 import "swiper/css";
 
-import Countdown from "@/components/Countdown/Countdown";
+import Countdown from "@/components/CountDown/CountDown";
 import Button from "@/components/Button";
 import SectionHeader from "../components/SectionHeader";
 
