@@ -2,6 +2,7 @@ import BrowseByCategory from "./BrowseByCategory/BrowseByCategory";
 import FlashSaleSection from "./FlashSale/FlashSale";
 import PromoBanner from "./PromoBanner/PromoBanner";
 import SellingProduct from "./SellingProduct/SellingProduct";
+import ExploreProducts from "./ExploreProducts/ExploreProduct";
 
 const HomePage = () => {
   return (
@@ -10,6 +11,7 @@ const HomePage = () => {
       <BrowseByCategory />
       <SellingProduct />
       <PromoBanner />
+      <ExploreProducts />
     </>
   );
 };

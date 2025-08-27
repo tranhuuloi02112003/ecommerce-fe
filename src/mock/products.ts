@@ -53,4 +53,28 @@ export const mockProducts: Product[] = [
     price: 200,
     rating: 5,
   },
+  {
+    id: "7",
+    name: "AK-900 Wired Keyboard",
+    image:
+      "https://www.logitech.com/content/dam/logitech/en/products/combos/pop-icon-combo/gallery/pop-icon-combo-rose-off-white-gallery-1-us.png",
+    price: 200,
+    rating: 5,
+  },
+  {
+    id: "8",
+    name: "AK-900 Wired Keyboard",
+    image:
+      "https://www.logitech.com/content/dam/logitech/en/products/combos/pop-icon-combo/gallery/pop-icon-combo-rose-off-white-gallery-1-us.png",
+    price: 200,
+    rating: 5,
+  },
+  {
+    id: "9",
+    name: "AK-900 Wired Keyboard",
+    image:
+      "https://www.logitech.com/content/dam/logitech/en/products/combos/pop-icon-combo/gallery/pop-icon-combo-rose-off-white-gallery-1-us.png",
+    price: 200,
+    rating: 5,
+  },
 ];

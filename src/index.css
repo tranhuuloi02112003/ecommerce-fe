@@ -64,4 +64,7 @@
     padding-left: var(--container-padding);
     padding-right: var(--container-padding);
   }
+  .explore-swiper .swiper-slide {
+    @apply mb-8; 
+  }
 }
