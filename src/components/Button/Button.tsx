@@ -10,6 +10,7 @@ type ButtonProps = {
   className?: string;
   children: React.ReactNode;
   onClick?: () => void;
+  type?: "button" | "submit" | "reset";
 };
 
 const Button = ({
@@ -20,10 +21,11 @@ const Button = ({
   className,
   children,
   onClick,
+  type = "button",
   ...rest
 }: ButtonProps) => {
   let Comp: React.ElementType = "button";
-  const props: Record<string, unknown> = { onClick, ...rest };
+  const props: Record<string, unknown> = { onClick, type, ...rest };
 
   if (disabled) {
     Object.keys(props).forEach((key) => {

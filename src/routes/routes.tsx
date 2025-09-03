@@ -1,5 +1,6 @@
 import HomePage from "../pages/Home/Home";
 import NotFoundPage from "../pages/NotFound";
+import { Login, SignUp } from "../pages/Auth";
 import routes from "../config/routes";
 import type { ComponentType, ReactNode } from "react";
 
@@ -13,6 +14,14 @@ const publicRoutes: RouteConfig[] = [
   {
     path: routes.home,
     element: <HomePage />,
+  },
+  {
+    path: routes.login,
+    element: <Login />,
+  },
+  {
+    path: routes.signUp,
+    element: <SignUp />,
   },
   {
     path: routes.notFound,

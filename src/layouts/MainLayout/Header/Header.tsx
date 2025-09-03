@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { HeartIcon, CartIcon, SearchIcon } from "@/components/icons";
+import routes from "@/config/routes";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -22,7 +23,7 @@ const Header = () => {
         <div className="font-inter text-[24px] mr-[190px]">Exclusive</div>
         {/* Nav */}
         <nav className="flex items-center gap-[48px] ">
-          <Link to="#" className="hover:text-primary">
+          <Link to={routes.home} className="hover:text-primary">
             Home
           </Link>
           <Link to="#" className="hover:text-primary">
@@ -31,8 +32,8 @@ const Header = () => {
           <Link to="#" className="hover:text-primary">
             About
           </Link>
-          <Link to="#" className="hover:text-primary">
-            Sign up
+          <Link to={routes.signUp} className="hover:text-primary">
+            Sign Up
           </Link>
         </nav>
         {/* Search + Actions */}
