@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { HeartIcon, CartIcon, SearchIcon } from "@/components/icons";
 import routes from "@/config/routes";
+import AccountDropdown from "./AccountDropdown";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -20,7 +21,7 @@ const Header = () => {
       {/* Main header */}
       <div className="app-container items-center justify-between mt-[30px] mb-[16px] flex w-full">
         {/* Logo */}
-        <div className="font-inter text-[24px] mr-[190px]">Exclusive</div>
+        <div className="font-inter text-[24px] mr-[70px]">Exclusive</div>
         {/* Nav */}
         <nav className="flex items-center gap-[48px] ">
           <Link to={routes.home} className="hover:text-primary">
@@ -39,20 +40,21 @@ const Header = () => {
         {/* Search + Actions */}
         <div className="flex items-center">
           {/* Search */}
-          <div className="flex items-center bg-[#F5F5F5] py-[7px] pr-[12px] pl-[20px]">
+          <div className="flex items-center justify-between bg-[#F5F5F5] py-[6px] pr-[12px] pl-[10px] rounded-md w-[243px]">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="What are you looking for?"
-              className="rounded-md p-2"
+              className="p-2 text-[12px] w-full"
             />
             <SearchIcon className="cursor-pointer" />
           </div>
           {/* Actions */}
-          <div className="flex items-center gap-4 text-xl">
-            <HeartIcon className="ml-[18px] mr-[12px] cursor-pointer" />
+          <div className="flex items-center justify-center gap-[16px] text-xl ml-[25px]">
+            <HeartIcon className="cursor-pointer" />
             <CartIcon size={24} color="#000" className="cursor-pointer" />
+            <AccountDropdown />
           </div>
         </div>
       </div>
