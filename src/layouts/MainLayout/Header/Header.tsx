@@ -52,7 +52,9 @@ const Header = () => {
           </div>
           {/* Actions */}
           <div className="flex items-center justify-center gap-[16px] text-xl ml-[25px]">
-            <HeartIcon className="cursor-pointer" />
+            <Link to={routes.wishlist}>
+              <HeartIcon className="cursor-pointer" />
+            </Link>
             <CartIcon size={24} color="#000" className="cursor-pointer" />
             <AccountDropdown />
           </div>

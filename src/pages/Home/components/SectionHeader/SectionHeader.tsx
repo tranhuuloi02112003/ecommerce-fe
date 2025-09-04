@@ -5,6 +5,7 @@ type SectionHeaderProps = {
   title: string;
   countdown?: React.ReactNode;
   rightSlot?: React.ReactNode;
+  titleClassName?: string;
 };
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -12,6 +13,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
   countdown,
   rightSlot,
+  titleClassName = "text-[36px] font-extrabold",
 }) => {
   return (
     <div className="mb-8">
@@ -26,7 +28,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
       {/* Title + Right */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <h2 className="text-[36px] font-extrabold">{title}</h2>
+          <h2 className={`${titleClassName}`}>{title}</h2>
           {countdown}
         </div>
         <div>{rightSlot}</div>

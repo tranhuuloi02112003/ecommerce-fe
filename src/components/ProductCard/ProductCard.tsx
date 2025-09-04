@@ -1,3 +1,4 @@
+import React from "react";
 import type { Product } from "../../types/product";
 import { HeartIcon } from "@/components/icons";
 
@@ -5,12 +6,16 @@ type ProductCardProps = {
   product: Product;
   onAddToCart?: (id: string) => void;
   onWishlistToggle?: (id: string) => void;
+  showRemove?: boolean;
+  onRemove?: (id: string) => void;
 };
 
 const ProductCard = ({
   product,
   onAddToCart,
   onWishlistToggle,
+  showRemove,
+  onRemove,
 }: ProductCardProps) => {
   const {
     id,
@@ -23,6 +28,7 @@ const ProductCard = ({
     reviewCount,
     isNew,
   } = product;
+
   return (
     <div className="cursor-pointer w-[270px] h-[350px]">
       {/* Image */}
@@ -38,7 +44,40 @@ const ProductCard = ({
           </span>
         )}
         <span className="flex items-center justify-center absolute top-[12px] right-[12px] p-3 rounded-full bg-white shadow-sm">
-          <HeartIcon className="size-[24px]" />
+          {showRemove ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="cursor-pointer hover:text-red-500"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                if (onRemove && id) {
+                  onRemove(id);
+                }
+              }}
+            >
+              <path
+                d="M20 5.57143H5.33333L6.66667 21H17.3333L18.6667 5.57143H4M12 9.42857V17.1429M15.3333 9.42857L14.6667 17.1429M8.66667 9.42857L9.33333 17.1429M9.33333 5.57143L10 3H14L14.6667 5.57143"
+                stroke="currentColor"
+                strokeWidth="1.56"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : (
+            <HeartIcon
+              className="size-[24px] cursor-pointer hover:text-red-500"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                if (onWishlistToggle && id) {
+                  onWishlistToggle(id);
+                }
+              }}
+            />
+          )}
         </span>
 
         <img
