@@ -4,6 +4,7 @@ import { Login, SignUp } from "../pages/Auth";
 import WishList from "../pages/WishList";
 import routes from "../config/routes";
 import type { ComponentType, ReactNode } from "react";
+import AdminLayout from "../layouts/AdminLayout";
 
 export interface RouteConfig {
   path: string;
@@ -35,4 +36,22 @@ const publicRoutes: RouteConfig[] = [
   },
 ];
 
-export { publicRoutes };
+const adminRoutes: RouteConfig[] = [
+  {
+    path: routes.ADMIN_HOME,
+    element: <div>Dashboard</div>,
+    layout: AdminLayout,
+  },
+  {
+    path: routes.ADMIN_ORDERS,
+    element: <div>Orders</div>,
+    layout: AdminLayout,
+  },
+  {
+    path: routes.ADMIN_PRODUCTS,
+    element: <div>Products</div>,
+    layout: AdminLayout,
+  },
+];
+
+export { publicRoutes, adminRoutes };

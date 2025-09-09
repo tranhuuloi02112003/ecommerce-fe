@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import type { RouteObject } from "react-router-dom";
 import type { ComponentType, ReactNode } from "react";
-import { publicRoutes } from "./routes";
+import { publicRoutes, adminRoutes } from "./routes";
 import MainLayout from "../layouts/MainLayout";
 
 type LayoutType = ComponentType<{ children: ReactNode }> | null;
@@ -21,7 +21,8 @@ const RouteWithLayout = ({
 
 // Tạo danh sách route object cho react-router
 const AppRoutes = (): RouteObject[] => {
-  return publicRoutes.map((route) => ({
+  const allRoutes = [...publicRoutes, ...adminRoutes];
+  return allRoutes.map((route) => ({
     ...route,
     element: <RouteWithLayout element={route.element} layout={route.layout} />,
   }));
