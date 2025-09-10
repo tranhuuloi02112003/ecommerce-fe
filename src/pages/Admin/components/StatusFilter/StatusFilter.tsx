@@ -19,7 +19,6 @@ export default function StatusFilter() {
   return (
     <Listbox value={selected} onChange={setSelected}>
       <div className="relative w-[170px]">
-        {/* Button */}
         <ListboxButton
           className="relative w-full p-[12px] rounded-lg bg-[#F4F2F2] 
                     text-left text-[14px] cursor-pointer flex items-center justify-between"
@@ -42,7 +41,6 @@ export default function StatusFilter() {
           </svg>
         </ListboxButton>
 
-        {/* Options */}
         <ListboxOptions
           className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 
                      text-sm shadow-lg z-10"
