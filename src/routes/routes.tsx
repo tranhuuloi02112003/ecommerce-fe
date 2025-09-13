@@ -5,6 +5,7 @@ import WishList from "../pages/WishList";
 import routes from "../config/routes";
 import type { ComponentType, ReactNode } from "react";
 import AdminLayout from "../layouts/AdminLayout";
+import ProductsList from "@/pages/Admin/ProductsList/ProductsList";
 
 export interface RouteConfig {
   path: string;
@@ -49,7 +50,7 @@ const adminRoutes: RouteConfig[] = [
   },
   {
     path: routes.ADMIN_PRODUCTS,
-    element: <div>Products</div>,
+    element: <ProductsList />,
     layout: AdminLayout,
   },
 ];

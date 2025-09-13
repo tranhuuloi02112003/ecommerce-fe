@@ -9,3 +9,15 @@ export interface Product {
   reviewCount?: number;
   isNew?: boolean;
 }
+
+
+// -------- Types --------
+export type ProductAdmin = {
+  id: string;
+  nameProduct: string;
+  nameCategory: string;
+  titleProduct: string;
+  descriptionProduct: string;
+  price: number;
+  thumbnail: string;
+};
