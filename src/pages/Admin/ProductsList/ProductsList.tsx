@@ -1,20 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination/Pagination";
-import { mockProductsAdmin } from "@/mock/products";
 import SearchIcon from "@/components/icons/SearchIcon";
+import { productsApi } from "@/services/productsApi";
+import type { Product } from "@/types/product";
+import { toast } from 'react-toastify';
 
 // -------- Helpers --------
 const formatPrice = (n: number) => `$${n.toLocaleString()}`;
 
 export default function ProductsList() {
   const [page, setPage] = useState(1);
-  const size = 7;
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+  
+  const size = 2;
 
-  // Calculate pagination
-  const total = mockProductsAdmin.length;
-  const pages = Math.max(1, Math.ceil(total / size));
-  const start = (page - 1) * size;
-  const items = mockProductsAdmin.slice(start, start + size);
+  useEffect(() => {
+    fetchProducts();
+  }, [page]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await productsApi.getProducts({ page, size });
+      
+      setProducts(response.data);
+      setTotalPages(response.pagination.totalPages);
+    } catch (err: unknown) {
+      console.error('❌ Failed to fetch products:', err);
+      
+      toast.error('System error occurred. Please try again later.');
+      
+      setProducts([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -43,8 +66,16 @@ export default function ProductsList() {
           </button>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-8 text-gray-500">
+            Loading products...
+          </div>
+        )}
+
         {/* Table */}
-        <div className="overflow-x-auto rounded-[16px] border border-gray-200 bg-white">
+        {!loading && (
+          <div className="overflow-x-auto rounded-[16px] border border-gray-200 bg-white">
           <table className="w-full text-[14px] table-fixed">
             <thead className="sticky top-0 bg-gray-50 text-left text-gray-600">
               <tr>
@@ -61,7 +92,8 @@ export default function ProductsList() {
             </thead>
 
             <tbody>
-              {items.map((p) => (
+              {products.length > 0 ? (
+                products.map((p: Product) => (
                 <tr key={p.id} className="border-t hover:bg-gray-50/50">
                   <td className="px-[16px] py-[12px] text-gray-600 font-mono text-[12px] truncate">
                     {p.id}
@@ -69,24 +101,24 @@ export default function ProductsList() {
                   <td className="px-[16px] py-[12px]">
                     <div className="flex items-center gap-[12px] min-w-0">
                       <img
-                        src={p.thumbnail}
-                        alt={p.nameProduct}
+                        src={p.imageUrl}
+                        alt={p.name}
                         className="w-[40px] h-[40px] rounded-[8px] object-cover flex-shrink-0"
                       />
                       <span className="font-medium text-gray-900 truncate">
-                        {p.nameProduct}
+                        {p.name}
                       </span>
                     </div>
                   </td>
 
                   <td className="px-[16px] py-[12px] text-gray-600 truncate">
-                    {p.nameCategory}
+                    {p.categoryName}
                   </td>
                   <td className="px-[16px] py-[12px] text-gray-600 truncate">
-                    {p.titleProduct}
+                    {p.name}
                   </td>
                   <td className="px-[16px] py-[12px] text-gray-600 truncate">
-                    {p.descriptionProduct}
+                    {p.description}
                   </td>
                   <td className="px-[16px] py-[12px] font-semibold truncate">
                     {formatPrice(p.price)}
@@ -106,17 +138,27 @@ export default function ProductsList() {
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="text-center py-8 text-gray-500">
+                    No products available
+                  </td>
+                </tr>
+              )}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        <Pagination
-          currentPage={page}
-          totalPages={pages}
-          onPageChange={setPage}
-          className="mt-[24px]"
-        />
+        {!loading && totalPages > 1 && (
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            className="mt-[24px]"
+          />
+        )}
       </main>
     </div>
   );

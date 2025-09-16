@@ -1,23 +1,25 @@
 export interface Product {
   id: string;
   name: string;
-  image: string;
+  description: string;
   price: number;
-  oldPrice?: number;
-  discount?: number;
-  rating?: number;
-  reviewCount?: number;
-  isNew?: boolean;
+  categoryName: string;
+  imageUrl: string;
 }
 
+export interface ProductsRequest {
+  page: number;
+  size: number;
+}
 
-// -------- Types --------
-export type ProductAdmin = {
-  id: string;
-  nameProduct: string;
-  nameCategory: string;
-  titleProduct: string;
-  descriptionProduct: string;
-  price: number;
-  thumbnail: string;
-};
+export interface ProductsResponse {
+  data: Product[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
