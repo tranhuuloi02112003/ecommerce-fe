@@ -10,6 +10,7 @@ export interface Product {
 export interface ProductsRequest {
   page: number;
   size: number;
+  search?: string;
 }
 
 export interface ProductsResponse {
@@ -22,4 +23,28 @@ export interface ProductsResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
+}
+
+export interface CreateProductRequest {
+  name: string;
+  description: string;
+  categoryId: string;
+  price: number;
+  stockQuantity: number;
+  colorIds: string[];
+  sizeIds: string[];
+  imageUrls: string[];
+}
+
+export interface CreateProductResponse {
+  id: string;
+  name: string;
+  description: string;
+  categoryId: string;
+  price: number;
+  stockQuantity: number;
+  colorIds: string[];
+  sizeIds: string[];
+  imageUrls: string[];
+  createdAt: string;
 }

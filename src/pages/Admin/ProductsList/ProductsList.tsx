@@ -1,42 +1,61 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchIcon from "@/components/icons/SearchIcon";
 import { productsApi } from "@/services/productsApi";
 import type { Product } from "@/types/product";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import routes from "@/config/routes";
+import useDebounce from "@/hooks/useDebounce";
 
 // -------- Helpers --------
 const formatPrice = (n: number) => `$${n.toLocaleString()}`;
 
 export default function ProductsList() {
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  
-  const size = 2;
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    fetchProducts();
-  }, [page]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const fetchProducts = async () => {
+  const size = 5;
+
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await productsApi.getProducts({ page, size });
-      
+      const response = await productsApi.getProducts({
+        page,
+        size,
+        search: debouncedSearchTerm,
+      });
+
       setProducts(response.data);
       setTotalPages(response.pagination.totalPages);
     } catch (err: unknown) {
-      console.error('❌ Failed to fetch products:', err);
-      
-      toast.error('System error occurred. Please try again later.');
-      
+      console.error("❌ Failed to fetch products:", err);
+
+      toast.error("System error occurred. Please try again later.");
+
       setProducts([]);
       setTotalPages(1);
     } finally {
       setLoading(false);
     }
+  }, [page, size, debouncedSearchTerm]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   return (
@@ -54,6 +73,8 @@ export default function ProductsList() {
           <div className="flex items-center gap-[8px]">
             <div className="relative w-[280px]">
               <input
+                value={searchTerm}
+                onChange={handleSearchChange}
                 placeholder="Search by name, title, category..."
                 className="w-full rounded-[12px] border border-gray-200 bg-white px-[16px] pr-[37px] py-[10px] text-[14px] outline-none focus:border-gray-400"
               />
@@ -61,7 +82,10 @@ export default function ProductsList() {
             </div>
           </div>
 
-          <button className="rounded-[12px] bg-gray-900 px-[16px] py-[8px] text-[14px] font-medium text-white hover:bg-black">
+          <button
+            className="rounded-[12px] bg-gray-900 px-[16px] py-[8px] text-[14px] font-medium text-white hover:bg-black"
+            onClick={() => navigate(routes.ADMIN_ADD_PRODUCT)}
+          >
             + Add Product
           </button>
         </div>
@@ -76,82 +100,82 @@ export default function ProductsList() {
         {/* Table */}
         {!loading && (
           <div className="overflow-x-auto rounded-[16px] border border-gray-200 bg-white">
-          <table className="w-full text-[14px] table-fixed">
-            <thead className="sticky top-0 bg-gray-50 text-left text-gray-600">
-              <tr>
-                <th className="px-[16px] py-[12px] w-[80px]">ID</th>
-                <th className="px-[16px] py-[12px] w-[200px]">Product</th>
-                <th className="px-[16px] py-[12px] w-[100px]">Category</th>
-                <th className="px-[16px] py-[12px] w-[150px]">Title</th>
-                <th className="px-[16px] py-[12px] w-[200px]">Description</th>
-                <th className="px-[16px] py-[12px] w-[100px]">Price</th>
-                <th className="px-[16px] py-[12px] w-[170px] text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {products.length > 0 ? (
-                products.map((p: Product) => (
-                <tr key={p.id} className="border-t hover:bg-gray-50/50">
-                  <td className="px-[16px] py-[12px] text-gray-600 font-mono text-[12px] truncate">
-                    {p.id}
-                  </td>
-                  <td className="px-[16px] py-[12px]">
-                    <div className="flex items-center gap-[12px] min-w-0">
-                      <img
-                        src={p.imageUrl}
-                        alt={p.name}
-                        className="w-[40px] h-[40px] rounded-[8px] object-cover flex-shrink-0"
-                      />
-                      <span className="font-medium text-gray-900 truncate">
-                        {p.name}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="px-[16px] py-[12px] text-gray-600 truncate">
-                    {p.categoryName}
-                  </td>
-                  <td className="px-[16px] py-[12px] text-gray-600 truncate">
-                    {p.name}
-                  </td>
-                  <td className="px-[16px] py-[12px] text-gray-600 truncate">
-                    {p.description}
-                  </td>
-                  <td className="px-[16px] py-[12px] font-semibold truncate">
-                    {formatPrice(p.price)}
-                  </td>
-
-                  <td className="px-[16px] py-[12px] text-right">
-                    <div className="inline-flex items-center gap-[4px]">
-                      <button className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100">
-                        View
-                      </button>
-                      <button className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100">
-                        Edit
-                      </button>
-                      <button className="rounded-[8px] px-[12px] py-[6px] text-red-600 hover:bg-red-50">
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                ))
-              ) : (
+            <table className="w-full text-[14px] table-fixed">
+              <thead className="sticky top-0 bg-gray-50 text-left text-gray-600">
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-gray-500">
-                    No products available
-                  </td>
+                  <th className="px-[16px] py-[12px] w-[80px]">ID</th>
+                  <th className="px-[16px] py-[12px] w-[200px]">Product</th>
+                  <th className="px-[16px] py-[12px] w-[100px]">Category</th>
+                  <th className="px-[16px] py-[12px] w-[150px]">Title</th>
+                  <th className="px-[16px] py-[12px] w-[200px]">Description</th>
+                  <th className="px-[16px] py-[12px] w-[100px]">Price</th>
+                  <th className="px-[16px] py-[12px] w-[170px] text-right">
+                    Actions
+                  </th>
                 </tr>
-              )}
+              </thead>
+
+              <tbody>
+                {products.length > 0 ? (
+                  products.map((p: Product) => (
+                    <tr key={p.id} className="border-t hover:bg-gray-50/50">
+                      <td className="px-[16px] py-[12px] text-gray-600 font-mono text-[12px] truncate">
+                        {p.id}
+                      </td>
+                      <td className="px-[16px] py-[12px]">
+                        <div className="flex items-center gap-[12px] min-w-0">
+                          <img
+                            src={p.imageUrl}
+                            alt={p.name}
+                            className="w-[40px] h-[40px] rounded-[8px] object-cover flex-shrink-0"
+                          />
+                          <span className="font-medium text-gray-900 truncate">
+                            {p.name}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className="px-[16px] py-[12px] text-gray-600 truncate">
+                        {p.categoryName}
+                      </td>
+                      <td className="px-[16px] py-[12px] text-gray-600 truncate">
+                        {p.name}
+                      </td>
+                      <td className="px-[16px] py-[12px] text-gray-600 truncate">
+                        {p.description}
+                      </td>
+                      <td className="px-[16px] py-[12px] font-semibold truncate">
+                        {formatPrice(p.price)}
+                      </td>
+
+                      <td className="px-[16px] py-[12px] text-right">
+                        <div className="inline-flex items-center gap-[4px]">
+                          <button className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100">
+                            View
+                          </button>
+                          <button className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100">
+                            Edit
+                          </button>
+                          <button className="rounded-[8px] px-[12px] py-[6px] text-red-600 hover:bg-red-50">
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="text-center py-8 text-gray-500">
+                      No products available
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         )}
 
-        {!loading && totalPages > 1 && (
+        {!loading && (
           <Pagination
             currentPage={page}
             totalPages={totalPages}
