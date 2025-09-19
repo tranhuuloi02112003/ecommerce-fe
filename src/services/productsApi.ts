@@ -1,5 +1,10 @@
 import http from "./http";
-import type { ProductsRequest, ProductsResponse, CreateProductRequest, CreateProductResponse } from "@/types/product";
+import type {
+  ProductsRequest,
+  ProductsResponse,
+  CreateProductRequest,
+  CreateProductResponse,
+} from "@/types/product";
 
 export const productsApi = {
   getProducts: async (params: ProductsRequest): Promise<ProductsResponse> => {
@@ -21,13 +26,46 @@ export const productsApi = {
     }
   },
 
-  createProduct: async (productData: CreateProductRequest): Promise<CreateProductResponse> => {
+  createProduct: async (
+    productData: CreateProductRequest
+  ): Promise<CreateProductResponse> => {
     try {
-      const response = await http.post<CreateProductResponse>("/api/products", productData);
+      const response = await http.post<CreateProductResponse>(
+        "/api/products",
+        productData
+      );
       return response.data;
     } catch (error: unknown) {
       console.error("❌ Create Product API error:", error);
       throw new Error("Failed to create product");
+    }
+  },
+
+  getProductById: async (id: string): Promise<CreateProductResponse> => {
+    try {
+      const response = await http.get<CreateProductResponse>(
+        `/api/products/${id}`
+      );
+      return response.data;
+    } catch (error: unknown) {
+      console.error("❌ Get Product API error:", error);
+      throw new Error("Failed to fetch product");
+    }
+  },
+
+  updateProduct: async (
+    id: string,
+    productData: CreateProductRequest
+  ): Promise<CreateProductResponse> => {
+    try {
+      const response = await http.put<CreateProductResponse>(
+        `/api/products/${id}`,
+        productData
+      );
+      return response.data;
+    } catch (error: unknown) {
+      console.error("❌ Update Product API error:", error);
+      throw new Error("Failed to update product");
     }
   },
 };

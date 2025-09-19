@@ -5,7 +5,7 @@ import React from "react";
 type ButtonProps = {
   to?: string;
   href?: string;
-  variant?: "primary" | "outline" | "text";
+  variant?: "primary" | "outline" | "text" | "admin";
   disabled?: boolean;
   className?: string;
   children: React.ReactNode;
@@ -50,6 +50,7 @@ const Button = ({
     primary: "bg-primary text-white rounded-[4px]",
     outline: "border border-black/40 rounded-[4px]",
     text: "bg-transparent text-primary font-normal",
+    admin: "bg-[#003F62] text-white rounded-[4px] hover:bg-[#002a44]",
   };
 
   const classes = clsx(

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { useParams, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "react-toastify";
@@ -15,9 +16,12 @@ import type { Category } from "@/types/category";
 import type { Color } from "@/types/color";
 import type { Size } from "@/types/size";
 
-type AddProductFormData = z.infer<typeof addProductSchema>;
+type EditProductFormData = z.infer<typeof addProductSchema>;
 
-const AddProduct = () => {
+const EditProduct = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   // Image upload state
   const [isUploadingImages, setIsUploadingImages] = useState(false);
 
@@ -36,6 +40,9 @@ const AddProduct = () => {
   const [loadingSizes, setLoadingSizes] = useState(false);
   const [isCreatingSize, setIsCreatingSize] = useState(false);
 
+  // Product loading state
+  const [isLoadingProduct, setIsLoadingProduct] = useState(true);
+
   const {
     register,
     handleSubmit,
@@ -44,7 +51,7 @@ const AddProduct = () => {
     control,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<AddProductFormData>({
+  } = useForm<EditProductFormData>({
     resolver: zodResolver(addProductSchema),
     defaultValues: {
       name: "",
@@ -58,8 +65,39 @@ const AddProduct = () => {
     },
   });
 
-  // Watch images field from RHF
   const watchedImages = watch("images") || [];
+
+  useEffect(() => {
+    if (!id) {
+      toast.error("Product ID is missing");
+      navigate("/admin/products");
+      return;
+    }
+
+    const loadProduct = async () => {
+      try {
+        setIsLoadingProduct(true);
+        const product = await productsApi.getProductById(id);
+
+        setValue("name", product.name);
+        setValue("description", product.description);
+        setValue("category", product.categoryId);
+        setValue("price", product.price);
+        setValue("stockQuantity", product.stockQuantity);
+        setValue("colors", product.colorIds);
+        setValue("sizes", product.sizeIds);
+        setValue("images", product.imageUrls);
+      } catch (error) {
+        console.error("Failed to load product:", error);
+        toast.error("Failed to load product data");
+        navigate("/admin/products");
+      } finally {
+        setIsLoadingProduct(false);
+      }
+    };
+
+    loadProduct();
+  }, [id, navigate, setValue]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -138,7 +176,6 @@ const AddProduct = () => {
 
       setCategories((prev) => [...prev, newCategory]);
 
-      // Set as selected option
       const newOption: { label: string; value: string } = {
         value: newCategory.id,
         label: newCategory.name,
@@ -165,13 +202,11 @@ const AddProduct = () => {
 
       setColors((prev) => [...prev, newColor]);
 
-      // Set as selected option (add to existing selections)
       const newOption: { label: string; value: string } = {
         value: newColor.id,
         label: newColor.name,
       };
 
-      // Get current colors from form and add new one
       const currentColors = getValues("colors") || [];
       const updatedColors = [...currentColors, newColor.id];
       setValue("colors", updatedColors, { shouldValidate: true });
@@ -195,13 +230,11 @@ const AddProduct = () => {
 
       setSizes((prev) => [...prev, newSize]);
 
-      // Set as selected option (add to existing selections)
       const newOption: { label: string; value: string } = {
         value: newSize.id,
         label: newSize.name,
       };
 
-      // Get current sizes from form and add new one
       const currentSizes = getValues("sizes") || [];
       const updatedSizes = [...currentSizes, newSize.id];
       setValue("sizes", updatedSizes, { shouldValidate: true });
@@ -217,7 +250,9 @@ const AddProduct = () => {
     }
   };
 
-  const onSubmit = async (data: AddProductFormData) => {
+  const onSubmit = async (data: EditProductFormData) => {
+    if (!id) return;
+
     try {
       const productData = {
         name: data.name,
@@ -230,13 +265,16 @@ const AddProduct = () => {
         imageUrls: data.images,
       };
 
-      await productsApi.createProduct(productData);
-      toast.success("Product added successfully!");
+      const updatedProduct = await productsApi.updateProduct(id, productData);
+      console.log("Updated product:", updatedProduct);
+
+      toast.success("Product updated successfully!");
+      navigate("/admin/products");
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("Error updating product:", error);
 
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to add product";
+        error instanceof Error ? error.message : "Failed to update product";
       toast.error(errorMessage);
     }
   };
@@ -284,24 +322,42 @@ const AddProduct = () => {
   };
 
   const removeImage = (index: number) => {
-    // Get current images from RHF
     const currentImages = getValues("images") || [];
 
-    // Remove from RHF images array
     const updatedImages = currentImages.filter((_, i) => i !== index);
     setValue("images", updatedImages, { shouldValidate: true });
   };
+
+  // Loading state for product data
+  if (isLoadingProduct) {
+    return (
+      <div className="min-h-screen">
+        <main className="mx-auto w-full max-w-[1200px] py-8 px-4">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="w-[48px] h-[48px] mx-auto mb-2 bg-blue-100 rounded-[8px] flex items-center justify-center">
+                <div className="w-[24px] h-[24px] border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <p className="text-[14px] text-blue-600 font-medium">
+                Loading product...
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
       <main className="mx-auto w-full max-w-[1200px] py-8 px-4">
         {/* Breadcrumb */}
         <div className="mb-[16px] text-[12px] text-gray-500">
-          Home &gt; All Products &gt; Add New Product
+          Home &gt; All Products &gt; Edit Product
         </div>
 
         <h1 className="mb-[16px] text-[22px] font-semibold text-gray-900">
-          Product Details
+          Edit Product
         </h1>
 
         <div className="p-[24px] bg-gray-50 rounded-2xl ">
@@ -771,7 +827,7 @@ const AddProduct = () => {
                   type="button"
                   variant="outline"
                   className="flex-1"
-                  onClick={() => window.history.back()}
+                  onClick={() => navigate("/admin/products")}
                 >
                   Cancel
                 </Button>
@@ -781,7 +837,7 @@ const AddProduct = () => {
                   className="flex-1"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Adding..." : "Add Product"}
+                  {isSubmitting ? "Updating..." : "Update Product"}
                 </Button>
               </div>
             </div>
@@ -792,4 +848,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

@@ -7,6 +7,7 @@ import type { ComponentType, ReactNode } from "react";
 import AdminLayout from "../layouts/AdminLayout";
 import ProductsList from "@/pages/Admin/ProductsList/ProductsList";
 import AddProduct from "@/pages/Admin/AddProduct/AddProduct ";
+import EditProduct from "@/pages/Admin/EditProduct/EditProduct";
 
 export interface RouteConfig {
   path: string;
@@ -57,6 +58,11 @@ const adminRoutes: RouteConfig[] = [
   {
     path: routes.ADMIN_ADD_PRODUCT,
     element: <AddProduct />,
+    layout: AdminLayout,
+  },
+  {
+    path: routes.ADMIN_EDIT_PRODUCT,
+    element: <EditProduct />,
     layout: AdminLayout,
   },
 ];

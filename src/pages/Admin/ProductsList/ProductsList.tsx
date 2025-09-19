@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchIcon from "@/components/icons/SearchIcon";
+import Button from "@/components/Button";
 import { productsApi } from "@/services/productsApi";
 import type { Product } from "@/types/product";
 import { toast } from "react-toastify";
@@ -58,6 +59,18 @@ export default function ProductsList() {
     setSearchTerm(e.target.value);
   };
 
+  const handleEditProduct = (productId: string) => {
+    navigate(routes.ADMIN_EDIT_PRODUCT.replace(":id", productId));
+  };
+
+  const handleViewProduct = (productId: string) => {
+    console.log("View product:", productId);
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    console.log("Delete product:", productId);
+  };
+
   return (
     <div className="min-h-screen">
       <main className="mx-auto w-full max-w-[1200px]">
@@ -82,12 +95,13 @@ export default function ProductsList() {
             </div>
           </div>
 
-          <button
-            className="rounded-[12px] bg-gray-900 px-[16px] py-[8px] text-[14px] font-medium text-white hover:bg-black"
+          <Button
+            variant="admin"
             onClick={() => navigate(routes.ADMIN_ADD_PRODUCT)}
+            className="px-[16px] text-[14px] font-medium !h-[46px]"
           >
             + Add Product
-          </button>
+          </Button>
         </div>
 
         {/* Loading State */}
@@ -150,13 +164,22 @@ export default function ProductsList() {
 
                       <td className="px-[16px] py-[12px] text-right">
                         <div className="inline-flex items-center gap-[4px]">
-                          <button className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100">
+                          <button
+                            onClick={() => handleViewProduct(p.id)}
+                            className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100"
+                          >
                             View
                           </button>
-                          <button className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100">
+                          <button
+                            onClick={() => handleEditProduct(p.id)}
+                            className="rounded-[8px] px-[12px] py-[6px] hover:bg-gray-100"
+                          >
                             Edit
                           </button>
-                          <button className="rounded-[8px] px-[12px] py-[6px] text-red-600 hover:bg-red-50">
+                          <button
+                            onClick={() => handleDeleteProduct(p.id)}
+                            className="rounded-[8px] px-[12px] py-[6px] text-red-600 hover:bg-red-50"
+                          >
                             Delete
                           </button>
                         </div>
