@@ -2,6 +2,7 @@ import HomePage from "../pages/Home/Home";
 import NotFoundPage from "../pages/NotFound";
 import { Login, SignUp } from "../pages/Auth";
 import WishList from "../pages/WishList";
+import Cart from "../pages/Cart/Cart";
 import routes from "../config/routes";
 import type { ComponentType, ReactNode } from "react";
 import AdminLayout from "../layouts/AdminLayout";
@@ -27,6 +28,10 @@ const publicRoutes: RouteConfig[] = [
   {
     path: routes.signUp,
     element: <SignUp />,
+  },
+  {
+    path: routes.cart,
+    element: <Cart />,
   },
   {
     path: routes.wishlist,

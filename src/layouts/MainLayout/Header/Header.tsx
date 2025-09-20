@@ -21,7 +21,9 @@ const Header = () => {
       {/* Main header */}
       <div className="app-container items-center justify-between mt-[30px] mb-[16px] flex w-full">
         {/* Logo */}
-        <div className="font-inter text-[24px] mr-[70px]">Exclusive</div>
+        <Link to={routes.home}>
+          <div className="font-inter text-[24px] mr-[70px]">Exclusive</div>
+        </Link>
         {/* Nav */}
         <nav className="flex items-center gap-[48px] ">
           <Link to={routes.home} className="hover:text-primary">
@@ -55,7 +57,9 @@ const Header = () => {
             <Link to={routes.wishlist}>
               <HeartIcon className="cursor-pointer" />
             </Link>
-            <CartIcon size={24} color="#000" className="cursor-pointer" />
+            <Link to={routes.cart}>
+              <CartIcon size={24} color="#000" className="cursor-pointer" />
+            </Link>
             <AccountDropdown />
           </div>
         </div>
