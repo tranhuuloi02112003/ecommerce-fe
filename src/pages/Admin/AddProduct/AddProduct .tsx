@@ -7,13 +7,9 @@ import CreatableSelect from "react-select/creatable";
 import Button from "@/components/Button/";
 import { addProductSchema } from "@/utils/validation";
 import { categoriesApi } from "@/services/categoriesApi";
-import { colorsApi } from "@/services/colorsApi";
-import { sizesApi } from "@/services/sizesApi";
 import { filesApi } from "@/services/filesApi";
 import { productsApi } from "@/services/productsApi";
 import type { Category } from "@/types/category";
-import type { Color } from "@/types/color";
-import type { Size } from "@/types/size";
 
 type AddProductFormData = z.infer<typeof addProductSchema>;
 
@@ -25,16 +21,6 @@ const AddProduct = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
-
-  // Colors state
-  const [colors, setColors] = useState<Color[]>([]);
-  const [loadingColors, setLoadingColors] = useState(false);
-  const [isCreatingColor, setIsCreatingColor] = useState(false);
-
-  // Sizes state
-  const [sizes, setSizes] = useState<Size[]>([]);
-  const [loadingSizes, setLoadingSizes] = useState(false);
-  const [isCreatingSize, setIsCreatingSize] = useState(false);
 
   const {
     register,
@@ -51,9 +37,7 @@ const AddProduct = () => {
       description: "",
       category: "",
       price: 0,
-      stockQuantity: 0,
-      colors: [],
-      sizes: [],
+      quantity: 0,
       images: [],
     },
   });
@@ -76,37 +60,7 @@ const AddProduct = () => {
       }
     };
 
-    const fetchColors = async () => {
-      try {
-        setLoadingColors(true);
-        const colorsData = await colorsApi.getColors();
-        setColors(colorsData);
-      } catch (error) {
-        console.error("Failed to fetch colors:", error);
-        toast.error("Failed to load colors");
-        setColors([]);
-      } finally {
-        setLoadingColors(false);
-      }
-    };
-
-    const fetchSizes = async () => {
-      try {
-        setLoadingSizes(true);
-        const sizesData = await sizesApi.getSizes();
-        setSizes(sizesData);
-      } catch (error) {
-        console.error("Failed to fetch sizes:", error);
-        toast.error("Failed to load sizes");
-        setSizes([]);
-      } finally {
-        setLoadingSizes(false);
-      }
-    };
-
     fetchCategories();
-    fetchColors();
-    fetchSizes();
   }, []);
 
   // Convert categories to react-select options
@@ -116,20 +70,6 @@ const AddProduct = () => {
       label: category.name,
     })
   );
-
-  // Convert colors to react-select options
-  const colorOptions: { label: string; value: string }[] = colors.map(
-    (color) => ({
-      value: color.id,
-      label: color.name,
-    })
-  );
-
-  // Convert sizes to react-select options
-  const sizeOptions: { label: string; value: string }[] = sizes.map((size) => ({
-    value: size.id,
-    label: size.name,
-  }));
 
   const handleCreateCategory = async (inputValue: string) => {
     try {
@@ -157,66 +97,6 @@ const AddProduct = () => {
     }
   };
 
-  // Handle color selection ---------------
-  const handleCreateColor = async (inputValue: string) => {
-    try {
-      setIsCreatingColor(true);
-      const newColor = await colorsApi.createColor(inputValue.trim());
-
-      setColors((prev) => [...prev, newColor]);
-
-      // Set as selected option (add to existing selections)
-      const newOption: { label: string; value: string } = {
-        value: newColor.id,
-        label: newColor.name,
-      };
-
-      // Get current colors from form and add new one
-      const currentColors = getValues("colors") || [];
-      const updatedColors = [...currentColors, newColor.id];
-      setValue("colors", updatedColors, { shouldValidate: true });
-
-      toast.success(`Color "${newColor.name}" created successfully!`);
-      return newOption;
-    } catch (error) {
-      console.error("Failed to create color:", error);
-      toast.error("Failed to create color");
-      throw error;
-    } finally {
-      setIsCreatingColor(false);
-    }
-  };
-
-  // Handle Size selection ---------------
-  const handleCreateSize = async (inputValue: string) => {
-    try {
-      setIsCreatingSize(true);
-      const newSize = await sizesApi.createSize(inputValue.trim());
-
-      setSizes((prev) => [...prev, newSize]);
-
-      // Set as selected option (add to existing selections)
-      const newOption: { label: string; value: string } = {
-        value: newSize.id,
-        label: newSize.name,
-      };
-
-      // Get current sizes from form and add new one
-      const currentSizes = getValues("sizes") || [];
-      const updatedSizes = [...currentSizes, newSize.id];
-      setValue("sizes", updatedSizes, { shouldValidate: true });
-
-      toast.success(`Size "${newSize.name}" created successfully!`);
-      return newOption;
-    } catch (error) {
-      console.error("Failed to create size:", error);
-      toast.error("Failed to create size");
-      throw error;
-    } finally {
-      setIsCreatingSize(false);
-    }
-  };
-
   const onSubmit = async (data: AddProductFormData) => {
     try {
       const productData = {
@@ -224,9 +104,7 @@ const AddProduct = () => {
         description: data.description,
         categoryId: data.category,
         price: data.price,
-        stockQuantity: data.stockQuantity,
-        colorIds: data.colors,
-        sizeIds: data.sizes,
+        quantity: data.quantity,
         imageUrls: data.images,
       };
 
@@ -248,16 +126,38 @@ const AddProduct = () => {
     const currentImages = getValues("images") || [];
     const currentImageCount = currentImages.length;
 
-    if (files.length > 4) {
-      toast.error("You can only select maximum 4 images at once");
-      e.target.value = "";
+    // Nếu đã có 4 ảnh, thay thế toàn bộ
+    if (currentImageCount >= 4) {
+      if (files.length > 4) {
+        toast.error("You can only select maximum 4 images to replace");
+        e.target.value = "";
+        return;
+      }
+
+      try {
+        setIsUploadingImages(true);
+        const uploadedUrls = await filesApi.uploadFiles(files);
+
+        // Thay thế toàn bộ với ảnh mới
+        const newImages = uploadedUrls.slice(0, 4); // Đảm bảo chỉ có 4 ảnh
+        setValue("images", newImages, { shouldValidate: true });
+
+        toast.success(`${files.length} image(s) replaced successfully!`);
+      } catch (error) {
+        console.error("Upload failed:", error);
+        toast.error("Upload failed, please try again");
+      } finally {
+        setIsUploadingImages(false);
+        e.target.value = "";
+      }
       return;
     }
 
+    // Nếu chưa đủ 4 ảnh, thêm ảnh mới
     if (currentImageCount + files.length > 4) {
       const remaining = 4 - currentImageCount;
       toast.error(
-        `You can only upload ${remaining} more image(s). You already have ${currentImageCount} image(s).`
+        `You can only upload ${remaining} more image(s). You need exactly 4 images total.`
       );
       e.target.value = "";
       return;
@@ -411,7 +311,7 @@ const AddProduct = () => {
                 )}
               </div>
 
-              {/* Price and Stock Quantity */}
+              {/* Price and Quantity */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[14px] font-medium text-gray-700 mb-2">
@@ -434,195 +334,21 @@ const AddProduct = () => {
 
                 <div>
                   <label className="block text-[14px] font-medium text-gray-700 mb-2">
-                    Stock Quantity
+                    Quantity
                   </label>
                   <input
-                    {...register("stockQuantity", { valueAsNumber: true })}
+                    {...register("quantity", { valueAsNumber: true })}
                     type="number"
                     min="0"
                     placeholder="0"
                     className="w-full px-[16px] py-[12px] border border-gray-200 rounded-[8px] text-[14px] outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
                   />
-                  {errors.stockQuantity && (
+                  {errors.quantity && (
                     <p className="mt-1 text-[12px] text-red-500">
-                      {errors.stockQuantity.message}
+                      {errors.quantity.message}
                     </p>
                   )}
                 </div>
-              </div>
-
-              {/* Colors */}
-              <div>
-                <label className="block text-[14px] font-medium text-gray-700 mb-2">
-                  Colors *
-                </label>
-                <Controller
-                  name="colors"
-                  control={control}
-                  render={({ field }) => (
-                    <CreatableSelect
-                      {...field}
-                      isMulti
-                      value={
-                        field.value
-                          ? colorOptions.filter((option) =>
-                              field.value.includes(option.value)
-                            )
-                          : []
-                      }
-                      onChange={(options) => {
-                        const selectedIds = options
-                          ? options.map((option) => option.value)
-                          : [];
-                        field.onChange(selectedIds);
-                      }}
-                      onCreateOption={handleCreateColor}
-                      options={colorOptions}
-                      isLoading={loadingColors || isCreatingColor}
-                      isDisabled={loadingColors}
-                      placeholder={
-                        loadingColors
-                          ? "Loading colors..."
-                          : "Select or type to create new colors"
-                      }
-                      formatCreateLabel={(inputValue) =>
-                        `Create "${inputValue}"`
-                      }
-                      noOptionsMessage={() => "No colors found"}
-                      isClearable
-                      classNamePrefix="rs"
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          minHeight: "44px",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "8px",
-                          fontSize: "14px",
-                          "&:hover": {
-                            borderColor: "#9ca3af",
-                          },
-                          "&:focus-within": {
-                            borderColor: "#9ca3af",
-                            boxShadow: "0 0 0 1px #9ca3af",
-                          },
-                        }),
-                        placeholder: (base) => ({
-                          ...base,
-                          color: "#9ca3af",
-                        }),
-                        multiValue: (base) => ({
-                          ...base,
-                          backgroundColor: "#f3f4f6",
-                          borderRadius: "6px",
-                        }),
-                        multiValueLabel: (base) => ({
-                          ...base,
-                          fontSize: "14px",
-                        }),
-                        multiValueRemove: (base) => ({
-                          ...base,
-                          ":hover": {
-                            backgroundColor: "#ef4444",
-                            color: "white",
-                          },
-                        }),
-                      }}
-                    />
-                  )}
-                />
-
-                {errors.colors && (
-                  <p className="mt-1 text-[12px] text-red-500">
-                    {errors.colors.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Sizes */}
-              <div>
-                <label className="block text-[14px] font-medium text-gray-700 mb-2">
-                  Sizes *
-                </label>
-                <Controller
-                  name="sizes"
-                  control={control}
-                  render={({ field }) => (
-                    <CreatableSelect
-                      {...field}
-                      isMulti
-                      value={
-                        field.value
-                          ? sizeOptions.filter((option) =>
-                              field.value.includes(option.value)
-                            )
-                          : []
-                      }
-                      onChange={(options) => {
-                        const selectedIds = options
-                          ? options.map((option) => option.value)
-                          : [];
-                        field.onChange(selectedIds);
-                      }}
-                      onCreateOption={handleCreateSize}
-                      options={sizeOptions}
-                      isLoading={loadingSizes || isCreatingSize}
-                      isDisabled={loadingSizes}
-                      placeholder={
-                        loadingSizes
-                          ? "Loading sizes..."
-                          : "Select or type to create new sizes"
-                      }
-                      formatCreateLabel={(inputValue) =>
-                        `Create "${inputValue}"`
-                      }
-                      noOptionsMessage={() => "No sizes found"}
-                      isClearable
-                      classNamePrefix="rs"
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          minHeight: "44px",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "8px",
-                          fontSize: "14px",
-                          "&:hover": {
-                            borderColor: "#9ca3af",
-                          },
-                          "&:focus-within": {
-                            borderColor: "#9ca3af",
-                            boxShadow: "0 0 0 1px #9ca3af",
-                          },
-                        }),
-                        placeholder: (base) => ({
-                          ...base,
-                          color: "#9ca3af",
-                        }),
-                        multiValue: (base) => ({
-                          ...base,
-                          backgroundColor: "#f3f4f6",
-                          borderRadius: "6px",
-                        }),
-                        multiValueLabel: (base) => ({
-                          ...base,
-                          fontSize: "14px",
-                        }),
-                        multiValueRemove: (base) => ({
-                          ...base,
-                          ":hover": {
-                            backgroundColor: "#ef4444",
-                            color: "white",
-                          },
-                        }),
-                      }}
-                    />
-                  )}
-                />
-
-                {errors.sizes && (
-                  <p className="mt-1 text-[12px] text-red-500">
-                    {errors.sizes.message}
-                  </p>
-                )}
               </div>
             </div>
 
@@ -685,15 +411,15 @@ const AddProduct = () => {
                   multiple
                   accept="image/*"
                   onChange={handleImageChange}
-                  disabled={isUploadingImages || watchedImages.length >= 4}
+                  disabled={isUploadingImages}
                   className="w-full px-[16px] py-[12px] border border-gray-200 rounded-[8px] text-[14px] outline-none focus:border-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
                 <p className="mt-1 text-[12px] text-gray-500">
                   {isUploadingImages
                     ? "Uploading images..."
                     : watchedImages.length >= 4
-                    ? "Maximum 4 images reached"
-                    : `Maximum 4 images allowed (${watchedImages.length}/4)`}
+                    ? "4 images uploaded (required)"
+                    : `4 images required (${watchedImages.length}/4)`}
                 </p>
                 {errors.images && (
                   <p className="mt-1 text-[12px] text-red-500">

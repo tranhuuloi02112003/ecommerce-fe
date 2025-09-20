@@ -30,9 +30,7 @@ export interface CreateProductRequest {
   description: string;
   categoryId: string;
   price: number;
-  stockQuantity: number;
-  colorIds: string[];
-  sizeIds: string[];
+  quantity: number;
   imageUrls: string[];
 }
 
@@ -42,9 +40,7 @@ export interface CreateProductResponse {
   description: string;
   categoryId: string;
   price: number;
-  stockQuantity: number;
-  colorIds: string[];
-  sizeIds: string[];
+  quantity: number;
   imageUrls: string[];
   createdAt: string;
 }
