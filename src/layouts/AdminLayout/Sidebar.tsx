@@ -127,7 +127,7 @@ const Sidebar: React.FC = () => {
         <Disclosure>
           {({ open }) => {
             return (
-              <>
+              <div>
                 <DisclosureButton className="flex items-center justify-between w-full py-[14px] text-[14px] font-medium cursor-pointer hover:bg-gray-50 rounded-lg transition-colors uppercase">
                   <span className="text-[20px] font-semibold">Categories</span>
                   <svg
@@ -169,7 +169,7 @@ const Sidebar: React.FC = () => {
                     ))}
                   </div>
                 </DisclosurePanel>
-              </>
+              </div>
             );
           }}
         </Disclosure>
