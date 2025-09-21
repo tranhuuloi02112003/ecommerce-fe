@@ -1,27 +1,16 @@
 import { z } from "zod";
 
-// Schema cho Login
 export const loginSchema = z.object({
-  emailOrPhone: z
+  email: z
     .string()
-    .min(1, "Email or Phone Number is required")
-    .refine(
-      (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const phoneRegex = /^[0-9]{10,11}$/;
-        return emailRegex.test(value) || phoneRegex.test(value);
-      },
-      {
-        message: "Please enter a valid email address or phone number",
-      }
-    ),
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
   password: z
     .string()
-    .min(6, "Password must be at least 6 characters")
+    .min(1, "Password must be at least 6 characters")
     .max(50, "Password must not exceed 50 characters"),
 });
 
-// Schema cho SignUp
 export const signUpSchema = z.object({
   name: z
     .string()
@@ -47,7 +36,6 @@ export const signUpSchema = z.object({
     .max(50, "Password must not exceed 50 characters"),
 });
 
-// Validation schema cho add product
 export const addProductSchema = z.object({
   name: z
     .string()
@@ -63,7 +51,6 @@ export const addProductSchema = z.object({
   images: z.array(z.string()).length(4, "Exactly 4 images are required"),
 });
 
-// Types derived from schemas
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 export type AddProductFormData = z.infer<typeof addProductSchema>;

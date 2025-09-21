@@ -7,8 +7,22 @@ import {
   MenuItem,
   Transition,
 } from "@headlessui/react";
+import authApi from "../../../services/authApi";
+import { handleApiError } from "../../../utils/errorHandler";
+import { toast } from "react-toastify";
 
 const AccountDropdown = () => {
+
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+      toast.success("Logout successful!");
+    } catch (error: unknown) {
+      const errorMessage = handleApiError(error, "Logout failed. Please try again.");
+      toast.error(errorMessage);
+    }
+  };
+
   return (
     <Menu as="div" className="relative">
       <MenuButton className="w-9 h-9 rounded-full text-white">
@@ -173,7 +187,10 @@ const AccountDropdown = () => {
           </MenuItem>
           <div className="my-1 h-px bg-gray-200" />
           <MenuItem>
-            <button className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-md text-white data-[focus]:bg-white/20">
+            <button 
+              onClick={handleLogout}
+              className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-md text-white data-[focus]:bg-white/20"
+            >
               <span className="w-[30px] flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

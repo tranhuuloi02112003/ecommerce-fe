@@ -1,13 +1,17 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginSchema, type LoginFormData } from "../../utils/validation";
+import { handleApiError } from "../../utils/errorHandler";
 import { authBanner } from "../../assets/images";
 import routes from "../../config/routes";
 import FormInputAuth from "./FormInputAuth";
 import Button from "@/components/Button/";
+import authApi from "../../services/authApi";
+import { toast } from "react-toastify";
 
 const Login = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,8 +20,21 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = () => {
-    alert("Login successful!");
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const loginData = {
+        email: data.email,
+        password: data.password,
+      };
+
+      await authApi.login(loginData);
+      toast.success("Login successful!");
+      
+      navigate("/");
+    } catch (error: unknown) {
+      const errorMessage = handleApiError(error, "Login failed. Please try again.");
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -43,10 +60,10 @@ const Login = () => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormInputAuth
-              label="Email or Phone Number"
-              name="emailOrPhone"
+              label="Email"
+              name="email"
               register={register}
-              error={errors.emailOrPhone}
+              error={errors.email}
               type="text"
               autoComplete="email"
             />

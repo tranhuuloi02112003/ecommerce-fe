@@ -173,15 +173,14 @@ const EditProduct = () => {
         e.target.value = "";
         return;
       }
-      
+
       try {
         setIsUploadingImages(true);
         const uploadedUrls = await filesApi.uploadFiles(files);
-        
-        // Thay thế toàn bộ với ảnh mới
+
         const newImages = uploadedUrls.slice(0, 4); // Đảm bảo chỉ có 4 ảnh
         setValue("images", newImages, { shouldValidate: true });
-        
+
         toast.success(`${files.length} image(s) replaced successfully!`);
       } catch (error) {
         console.error("Upload failed:", error);
