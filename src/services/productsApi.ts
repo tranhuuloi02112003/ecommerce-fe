@@ -1,9 +1,11 @@
+import { handleApiError } from "@/utils/errorHandler";
 import http from "./http";
 import type {
   ProductsRequest,
   ProductsResponse,
   CreateProductRequest,
   CreateProductResponse,
+  ProductHomeResponse,
 } from "@/types/product";
 
 export const productsApi = {
@@ -20,9 +22,9 @@ export const productsApi = {
       );
       return response.data;
     } catch (error: unknown) {
-      console.error("❌ Products API error:", error);
-
-      throw new Error("Failed to fetch products");
+      const message = handleApiError(error, "Failed to fetch products");
+      console.error("❌ Products API error:", message);
+      throw new Error(message);
     }
   },
 
@@ -36,8 +38,9 @@ export const productsApi = {
       );
       return response.data;
     } catch (error: unknown) {
-      console.error("❌ Create Product API error:", error);
-      throw new Error("Failed to create product");
+      const message = handleApiError(error, "Failed to create product");
+      console.error("❌ Create Product API error:", message);
+      throw new Error(message);
     }
   },
 
@@ -48,8 +51,9 @@ export const productsApi = {
       );
       return response.data;
     } catch (error: unknown) {
-      console.error("❌ Get Product API error:", error);
-      throw new Error("Failed to fetch product");
+      const message = handleApiError(error, "Failed to fetch product");
+      console.error("❌ Get Product API error:", message);
+      throw new Error(message);
     }
   },
 
@@ -64,8 +68,22 @@ export const productsApi = {
       );
       return response.data;
     } catch (error: unknown) {
-      console.error("❌ Update Product API error:", error);
-      throw new Error("Failed to update product");
+      const message = handleApiError(error, "Failed to update product");
+      console.error("❌ Update Product API error:", message);
+      throw new Error(message);
+    }
+  },
+
+  getExploreProducts: async (): Promise<ProductHomeResponse[]> => {
+    try {
+      const response = await http.get<ProductHomeResponse[]>(
+        `/api/products/explore`
+      );
+      return response.data;
+    } catch (error: unknown) {
+      const message = handleApiError(error, "Failed to fetch products");
+      console.error("❌ Explore Products API error:", message);
+      throw new Error(message);
     }
   },
 };

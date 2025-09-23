@@ -44,3 +44,11 @@ export interface CreateProductResponse {
   imageUrls: string[];
   createdAt: string;
 }
+
+export interface ProductHomeResponse {
+  id: string;
+  name: string;
+  price: number;
+  mainImage: string;
+  isNew: boolean;
+}
