@@ -1,41 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@/components/Button";
-import { mockCartItems, type CartItem } from "@/mock/cart";
 import routes from "@/config/routes";
+import { cartApi, type CartResponse } from "@/services/cartApi";
+import { toast } from "react-toastify";
+import { handleApiError } from "@/utils/errorHandler";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(mockCartItems);
+  const [cartItems, setCartItems] = useState<CartResponse[]>([]);
   const [couponCode, setCouponCode] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        setLoading(true);
+        const response = await cartApi.getCart();
+        setCartItems(response);
+      } catch (err: unknown) {
+        console.error("❌ Failed to fetch products:", err);
+        toast.error("System error occurred. Please try again later.");
+        setCartItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCart();
+  }, []);
+
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const shipping = 0;
   const total = subtotal + shipping;
 
-  const updateQuantity = (id: string, newQuantity: number) => {
+  const updateQuantity = async (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
-
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: newQuantity,
-              subtotal: item.price * newQuantity,
-            }
-          : item
-      )
-    );
+    setLoading(true);
+    try {
+      const updated = await cartApi.updateCart({
+        productId,
+        quantity: newQuantity,
+      });
+      setCartItems(updated);
+    } catch (err) {
+      toast.error(handleApiError(err, "Failed to update cart item"));
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeItem = (id: string) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
+  const removeItem = async (productId: string) => {
+    setLoading(true);
+    try {
+      const updated = await cartApi.removeItem(productId);
+      setCartItems(updated);
+    } catch (err) {
+      toast.error(handleApiError(err, "Failed to remove cart item"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const applyCoupon = () => {
     console.log("Applying coupon:", couponCode);
   };
 
-  if (cartItems.length === 0) {
+  if (!loading && cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-white">
         <main className="mx-auto w-full max-w-[1200px] py-8 px-4">
@@ -169,103 +200,104 @@ const Cart = () => {
                 </tr>
               </thead>
               <tbody>
-                {cartItems.map((item) => (
-                  <tr key={item.id} className="border-b border-gray-100">
-                    {/* Product Info */}
-                    <td className="py-4">
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="size-[65px] object-cover rounded-[8px] flex-shrink-0"
-                        />
-                        <div>
-                          <h3 className="text-[16px] font-medium text-gray-900">
-                            {item.name}
-                          </h3>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Price */}
-                    <td className="py-4 text-center">
-                      <span className="text-[16px] font-normal">
-                        ${item.price}
-                      </span>
-                    </td>
-
-                    {/* Quantity */}
-                    <td className="py-4">
-                      <div className="flex justify-center">
-                        <div className="flex items-center border border-gray-300 rounded-[4px] p-2">
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
-                            }
-                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 p-5"
-                            disabled={item.quantity <= 1}
-                          >
-                            -
-                          </button>
-                          <span className="w-12 h-8 flex items-center justify-center text-[14px]">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
-                            }
-                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 p-5"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Subtotal */}
-                    <td className="py-4 text-center">
-                      <span className="text-[16px] font-medium">
-                        ${item.subtotal}
-                      </span>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="py-4 text-center">
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-                        title="Remove item"
-                      >
-                        <svg
-                          className="w-[24px] h-[24px]"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                {cartItems
+                  .filter((item) => item.quantity > 0)
+                  .map((item) => (
+                    <tr
+                      key={item.productId}
+                      className="border-b border-gray-100"
+                    >
+                      {/* Product Info */}
+                      <td className="py-4">
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={item.productMainImage}
+                            alt={item.productName}
+                            className="size-[65px] object-cover rounded-[8px] flex-shrink-0"
                           />
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                          <div>
+                            <h3 className="text-[16px] font-medium text-gray-900">
+                              {item.productName}
+                            </h3>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Price */}
+                      <td className="py-4 text-center">
+                        <span className="text-[16px] font-normal">
+                          ${item.price}
+                        </span>
+                      </td>
+
+                      {/* Quantity */}
+                      <td className="py-4">
+                        <div className="flex justify-center">
+                          <div className="flex items-center border border-gray-300 rounded-[4px] p-2">
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.productId,
+                                  item.quantity - 1
+                                )
+                              }
+                              className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 p-5"
+                              disabled={item.quantity <= 1}
+                            >
+                              -
+                            </button>
+                            <span className="w-12 h-8 flex items-center justify-center text-[14px]">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.productId,
+                                  item.quantity + 1
+                                )
+                              }
+                              className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 p-5"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Subtotal */}
+                      <td className="py-4 text-center">
+                        <span className="text-[16px] font-medium">
+                          ${item.price * item.quantity}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-4 text-center">
+                        <button
+                          onClick={() => removeItem(item.productId)}
+                          className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                          title="Remove item"
+                        >
+                          <svg
+                            className="w-[24px] h-[24px]"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-between items-center mt-8">
-            <Button to={routes.home} variant="outline" className="w-[218px]">
-              Return To Shop
-            </Button>
-            <Button variant="outline" className="w-[195px]">
-              Update Cart
-            </Button>
           </div>
         </div>
 
