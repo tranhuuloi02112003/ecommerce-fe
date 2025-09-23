@@ -7,6 +7,7 @@ import SectionHeader from "../components/SectionHeader";
 import ProductCard from "@/components/ProductCard";
 import { useEffect, useState } from "react";
 import { productsApi } from "@/services/productsApi";
+import { cartApi } from "@/services/cartApi";
 import type { ProductHomeResponse } from "@/types/product";
 import Button from "@/components/Button";
 import { toast } from "react-toastify";
@@ -76,7 +77,21 @@ const ExploreProducts = () => {
           ) : Array.isArray(products) ? (
             products.map((product) => (
               <SwiperSlide key={product.id}>
-                <ProductCard product={product} />
+                <ProductCard
+                  product={product}
+                  onAddToCart={async (id) => {
+                    try {
+                      await cartApi.addToCart(id);
+                      toast.success("Added to cart!");
+                    } catch (err) {
+                      toast.error(
+                        err instanceof Error
+                          ? err.message
+                          : "Add to cart failed"
+                      );
+                    }
+                  }}
+                />
               </SwiperSlide>
             ))
           ) : null}

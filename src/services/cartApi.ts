@@ -1,4 +1,5 @@
 
+import { handleApiError } from "@/utils/errorHandler";
 import http from "./http";
 
 export interface CartResponse {
@@ -29,4 +30,14 @@ export const cartApi = {
 		const res = await http.delete<CartResponse[]>(`/api/carts/${productId}`);
 		return res.data;
 	},
+	addToCart: async (productId: string): Promise<CartResponse[]> => {
+		try {
+		  const response = await http.post<CartResponse[]>(`/api/carts/${productId}`);
+		  return response.data;
+		} catch (error: unknown) {
+		  const message = handleApiError(error, "Failed to add product to cart");
+		  console.error("❌ Add to Cart API error:", message);
+		  throw new Error(message);
+		}
+	}
 };

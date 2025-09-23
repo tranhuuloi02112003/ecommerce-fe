@@ -30,9 +30,9 @@ const ProductCard = ({
   } = product;
 
   return (
-    <div className="cursor-pointer w-[270px] h-[350px]">
+    <div className="cursor-pointer w-[270px] h-[350px] group">
       {/* Image */}
-      <div className="flex items-center justify-center bg-[#F5F5F5] relative w-full h-[250px] p-[20px]">
+      <div className="flex items-center justify-center bg-[#F5F5F5] relative w-full h-[250px] p-[20px] rounded-lg">
         {/* {discount && (
           <span className="absolute top-[12px] text-center text-[12px] left-[12px] h-[22px] w-[56px] bg-red-500 text-white  px-3 py-1 rounded">
             -{discount}%
@@ -85,6 +85,19 @@ const ProductCard = ({
           alt={name}
           className="bg-[#F5F5F5] w-full h-40 object-contain "
         />
+
+        <button
+          className="absolute left-0 right-0 bottom-0 h-16 bg-black text-white font-medium text-[16px] rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          style={{ zIndex: 2 }}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (onAddToCart && id) {
+              onAddToCart(id);
+            }
+          }}
+        >
+          Add To Cart
+        </button>
       </div>
 
       {/* Info */}
