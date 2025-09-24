@@ -4,6 +4,8 @@ import type {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from "axios";
+import { de } from "date-fns/locale";
+import { toast } from "react-toastify";
 
 const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -66,10 +68,9 @@ http.interceptors.response.use(
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as (typeof error.config & { _retry?: boolean });
-
     const isTokenExpired =
-      error.response?.status === 401 ||
-      error.response?.status === 403 
+      error.response?.status === 401 || 403;
+
 
     if (isTokenExpired && originalRequest && !originalRequest._retry) {
       if (isRefreshing) {
@@ -123,8 +124,8 @@ http.interceptors.response.use(
       } catch (refreshError) {
 
         processQueue(refreshError);
-
         localStorage.removeItem("accessToken");
+        toast.error("Session expired. Please log in again.");
 
         if (window.location.pathname !== "/login") {
           window.location.href = "/login";

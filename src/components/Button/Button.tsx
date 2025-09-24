@@ -38,9 +38,11 @@ const Button = ({
   if (to) {
     props.to = to;
     Comp = Link;
+    delete props.type;
   } else if (href) {
     props.href = href;
     Comp = "a";
+    delete props.type;
   }
 
   const baseClasses =
@@ -59,6 +61,13 @@ const Button = ({
     disabled && "opacity-50 pointer-events-none",
     className
   );
+   if (Comp === "button") {
+    props.disabled = disabled;
+  } else if (disabled) {
+    props["aria-disabled"] = true;
+    props.tabIndex = -1;
+    props.onClick = (e: React.MouseEvent) => e.preventDefault();
+  }
 
   return (
     <Comp className={classes} {...props}>

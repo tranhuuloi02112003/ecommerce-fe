@@ -1,13 +1,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signUpSchema, type SignUpFormData } from "../../utils/validation";
 import FormInputAuth from "./FormInputAuth";
 import { authBanner } from "../../assets/images";
 import routes from "../../config/routes";
 import Button from "../../components/Button/Button";
+import authApi from "../../services/authApi";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,8 +19,16 @@ const SignUp = () => {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = () => {
-    alert("OnSubmit!");
+  const onSubmit = async (data: SignUpFormData) => {
+    try {
+      await authApi.register(data);
+      toast.success("Account created successfully!");
+      navigate("/login");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Registration failed. Please try again."
+      );
+    }
   };
 
   const handleGoogleSignUp = () => {
@@ -46,21 +57,31 @@ const SignUp = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
+
             <FormInputAuth
-              label="Name"
-              name="name"
+              label="First Name"
+              name="firstName"
               register={register}
-              error={errors.name}
+              error={errors.firstName}
               type="text"
-              autoComplete="name"
+              autoComplete="given-name"
             />
 
             <FormInputAuth
-              label="Email or Phone Number"
-              name="emailOrPhone"
+              label="Last Name"
+              name="lastName"
               register={register}
-              error={errors.emailOrPhone}
+              error={errors.lastName}
               type="text"
+              autoComplete="family-name"
+            />
+
+            <FormInputAuth
+              label="Email"
+              name="email"
+              register={register}
+              error={errors.email}
+              type="email"
               autoComplete="email"
             />
 
@@ -95,7 +116,7 @@ const SignUp = () => {
                 viewBox="0 0 24 25"
                 fill="none"
               >
-                <g clip-path="url(#clip0_195_976)">
+                <g clipPath="url(#clip0_195_976)">
                   <path
                     d="M23.766 12.7764C23.766 11.9607 23.6999 11.1406 23.5588 10.3381H12.24V14.9591H18.7217C18.4528 16.4494 17.5885 17.7678 16.323 18.6056V21.6039H20.19C22.4608 19.5139 23.766 16.4274 23.766 12.7764Z"
                     fill="#4285F4"
@@ -126,8 +147,8 @@ const SignUp = () => {
               </svg>
               Sign up with Google
             </Button>
-
-            <div className="text-center">
+          </form>
+           <div className="text-center">
               <span className="text-[16px] text-black/70">
                 Already have account?{" "}
               </span>
@@ -138,7 +159,6 @@ const SignUp = () => {
                 Log in
               </Link>
             </div>
-          </form>
         </div>
       </div>
     </div>

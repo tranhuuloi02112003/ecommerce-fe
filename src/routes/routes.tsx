@@ -1,20 +1,22 @@
+import type { ComponentType, ReactNode } from "react";
 import HomePage from "../pages/Home/Home";
 import NotFoundPage from "../pages/NotFound";
 import { Login, SignUp } from "../pages/Auth";
 import WishList from "../pages/WishList";
 import Cart from "../pages/Cart/Cart";
 import routes from "../config/routes";
-import type { ComponentType, ReactNode } from "react";
 import AdminLayout from "../layouts/AdminLayout";
 import ProductsList from "@/pages/Admin/ProductsList/ProductsList";
 import AddProduct from "@/pages/Admin/AddProduct/AddProduct ";
 import EditProduct from "@/pages/Admin/EditProduct/EditProduct";
+import ProductDetail from "@/pages/Home/ProductDetail/ProductDetail";
 
 export interface RouteConfig {
   path: string;
   element: React.ReactNode;
   layout?: ComponentType<{ children: ReactNode }> | null;
 }
+
 
 const publicRoutes: RouteConfig[] = [
   {
@@ -36,6 +38,10 @@ const publicRoutes: RouteConfig[] = [
   {
     path: routes.wishlist,
     element: <WishList />,
+  },
+  {
+    path: routes.productDetail,
+    element: <ProductDetail />,
   },
   {
     path: routes.notFound,

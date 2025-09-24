@@ -12,27 +12,21 @@ export const loginSchema = z.object({
 });
 
 export const signUpSchema = z.object({
-  name: z
+  firstName: z
     .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name must not exceed 50 characters")
-    .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
-  emailOrPhone: z
+    .min(2, "First name must be at least 2 characters")
+    .max(30, "First name must not exceed 30 characters"),
+  lastName: z
     .string()
-    .min(1, "Email or Phone Number is required")
-    .refine(
-      (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const phoneRegex = /^[0-9]{10,11}$/;
-        return emailRegex.test(value) || phoneRegex.test(value);
-      },
-      {
-        message: "Please enter a valid email address or phone number",
-      }
-    ),
+    .min(2, "Last name must be at least 2 characters")
+    .max(30, "Last name must not exceed 30 characters"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
+    .min(6, "Password must be at least 6 characters")
     .max(50, "Password must not exceed 50 characters"),
 });
 

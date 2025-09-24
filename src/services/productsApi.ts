@@ -86,4 +86,23 @@ export const productsApi = {
       throw new Error(message);
     }
   },
+
+  getProductDetail: async (
+    id: string
+  ): Promise<{
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    imageUrls: string[];
+  }> => {
+    try {
+      const response = await http.get(`/api/products/${id}`);
+      return response.data;
+    } catch (error: unknown) {
+      const message = handleApiError(error, "Failed to fetch product detail");
+      console.error("❌ Product Detail API error:", message);
+      throw new Error(message);
+    }
+  },
 };

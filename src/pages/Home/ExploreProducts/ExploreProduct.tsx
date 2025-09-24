@@ -5,6 +5,8 @@ import "swiper/css/grid";
 
 import SectionHeader from "../components/SectionHeader";
 import ProductCard from "@/components/ProductCard";
+import { useNavigate } from "react-router-dom";
+import routes from "@/config/routes";
 import { useEffect, useState } from "react";
 import { productsApi } from "@/services/productsApi";
 import { cartApi } from "@/services/cartApi";
@@ -13,6 +15,8 @@ import Button from "@/components/Button";
 import { toast } from "react-toastify";
 
 const ExploreProducts = () => {
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState<ProductHomeResponse[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -91,6 +95,9 @@ const ExploreProducts = () => {
                       );
                     }
                   }}
+                  onCardClick={() =>
+                    navigate(routes.productDetail.replace(":id", product.id))
+                  }
                 />
               </SwiperSlide>
             ))

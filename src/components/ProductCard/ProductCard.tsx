@@ -8,6 +8,7 @@ type ProductCardProps = {
   onWishlistToggle?: (id: string) => void;
   showRemove?: boolean;
   onRemove?: (id: string) => void;
+  onCardClick?: () => void;
 };
 
 const ProductCard = ({
@@ -16,6 +17,7 @@ const ProductCard = ({
   onWishlistToggle,
   showRemove,
   onRemove,
+  onCardClick,
 }: ProductCardProps) => {
   const {
     id,
@@ -30,7 +32,10 @@ const ProductCard = ({
   } = product;
 
   return (
-    <div className="cursor-pointer w-[270px] h-[350px] group">
+    <div
+      className="cursor-pointer w-[270px] h-[350px] group"
+      onClick={onCardClick}
+    >
       {/* Image */}
       <div className="flex items-center justify-center bg-[#F5F5F5] relative w-full h-[250px] p-[20px] rounded-lg">
         {/* {discount && (
