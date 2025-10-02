@@ -50,5 +50,6 @@ export interface ProductHomeResponse {
   name: string;
   price: number;
   mainImage: string;
-  isNew: boolean;
+  new: boolean;
+  wish: boolean;
 }

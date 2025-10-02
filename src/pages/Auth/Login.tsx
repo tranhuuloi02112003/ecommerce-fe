@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { loginSchema, type LoginFormData } from "../../utils/validation";
-import { handleApiError } from "../../utils/errorHandler";
 import { authBanner } from "../../assets/images";
 import routes from "../../config/routes";
 import FormInputAuth from "./FormInputAuth";
@@ -29,11 +28,14 @@ const Login = () => {
 
       await authApi.login(loginData);
       toast.success("Login successful!");
-      
+
       navigate("/");
     } catch (error: unknown) {
-      const errorMessage = handleApiError(error, "Login failed. Please try again.");
-      toast.error(errorMessage);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Login failed. Please try again."
+      );
     }
   };
 

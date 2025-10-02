@@ -4,7 +4,6 @@ import { productsApi } from "@/services/productsApi";
 import Button from "@/components/Button/Button";
 import HeartIcon from "@/components/icons/HeartIcon";
 import { toast } from "react-toastify";
-import { handleApiError } from "@/utils/errorHandler";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -29,7 +28,9 @@ const ProductDetail = () => {
         setProduct(data);
         setActiveImage(0);
       } catch (err) {
-        toast.error(handleApiError(err, "Failed to load product"));
+        toast.error(
+          err instanceof Error ? err.message : "Failed to load product"
+        );
       } finally {
         setLoading(false);
       }

@@ -26,7 +26,9 @@ const SignUp = () => {
       navigate("/login");
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Registration failed. Please try again."
+        err instanceof Error
+          ? err.message
+          : "Registration failed. Please try again."
       );
     }
   };
@@ -57,7 +59,6 @@ const SignUp = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-
             <FormInputAuth
               label="First Name"
               name="firstName"
@@ -148,17 +149,17 @@ const SignUp = () => {
               Sign up with Google
             </Button>
           </form>
-           <div className="text-center">
-              <span className="text-[16px] text-black/70">
-                Already have account?{" "}
-              </span>
-              <Link
-                to={routes.login}
-                className="text-gray-900 hover:text-gray-700 font-medium border-b border-gray-900/50"
-              >
-                Log in
-              </Link>
-            </div>
+          <div className="text-center">
+            <span className="text-[16px] text-black/70">
+              Already have account?{" "}
+            </span>
+            <Link
+              to={routes.login}
+              className="text-gray-900 hover:text-gray-700 font-medium border-b border-gray-900/50"
+            >
+              Log in
+            </Link>
+          </div>
         </div>
       </div>
     </div>

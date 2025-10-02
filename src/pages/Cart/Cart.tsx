@@ -3,7 +3,6 @@ import Button from "@/components/Button";
 import routes from "@/config/routes";
 import { cartApi, type CartResponse } from "@/services/cartApi";
 import { toast } from "react-toastify";
-import { handleApiError } from "@/utils/errorHandler";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState<CartResponse[]>([]);
@@ -17,8 +16,11 @@ const Cart = () => {
         const response = await cartApi.getCart();
         setCartItems(response);
       } catch (err: unknown) {
-        console.error("❌ Failed to fetch products:", err);
-        toast.error("System error occurred. Please try again later.");
+        toast.error(
+          err instanceof Error
+            ? err.message
+            : "Failed to load your cart. Please try again."
+        );
         setCartItems([]);
       } finally {
         setLoading(false);
@@ -44,7 +46,10 @@ const Cart = () => {
       });
       setCartItems(updated);
     } catch (err) {
-      toast.error(handleApiError(err, "Failed to update cart item"));
+      // cartApi.updateCart đã xử lý lỗi bằng handleApiError
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update cart item"
+      );
     } finally {
       setLoading(false);
     }
@@ -56,7 +61,10 @@ const Cart = () => {
       const updated = await cartApi.removeItem(productId);
       setCartItems(updated);
     } catch (err) {
-      toast.error(handleApiError(err, "Failed to remove cart item"));
+      // cartApi.removeItem đã xử lý lỗi bằng handleApiError
+      toast.error(
+        err instanceof Error ? err.message : "Failed to remove cart item"
+      );
     } finally {
       setLoading(false);
     }

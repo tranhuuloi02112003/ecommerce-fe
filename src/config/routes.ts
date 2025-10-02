@@ -6,6 +6,7 @@ const routes = {
   wishlist: "/wishlist",
   notFound: "*",
   productDetail: "/product/:id",
+  search: "/search",
   ADMIN_HOME: "/admin",
   ADMIN_ORDERS: "/admin/orders",
   ADMIN_PRODUCTS: "/admin/products",

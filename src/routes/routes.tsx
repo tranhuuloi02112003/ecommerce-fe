@@ -10,6 +10,7 @@ import ProductsList from "@/pages/Admin/ProductsList/ProductsList";
 import AddProduct from "@/pages/Admin/AddProduct/AddProduct ";
 import EditProduct from "@/pages/Admin/EditProduct/EditProduct";
 import ProductDetail from "@/pages/Home/ProductDetail/ProductDetail";
+import ProductsSearch from "@/pages/ProductsSearch/ProductsSearch";
 
 export interface RouteConfig {
   path: string;
@@ -42,6 +43,10 @@ const publicRoutes: RouteConfig[] = [
   {
     path: routes.productDetail,
     element: <ProductDetail />,
+  },
+  {
+    path: routes.search,
+    element: <ProductsSearch />,
   },
   {
     path: routes.notFound,

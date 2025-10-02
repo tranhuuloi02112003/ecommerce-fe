@@ -1,18 +1,39 @@
-import React from "react";
-import { mockProducts } from "@/mock/products";
+import React, { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/pages/Home/components/SectionHeader";
 import Button from "@/components/Button";
+import { wishApi } from "@/services/wishApi";
+import type { ProductHomeResponse } from "@/types/product";
+import { toast } from "react-toastify";
 
 const WishList: React.FC = () => {
-  const wishlistProducts = mockProducts.slice(0, 4);
+  const [wishlistProducts, setWishlistProducts] = useState<
+    ProductHomeResponse[]
+  >([]);
 
-  const handleRemoveFromWishlist = (id: string) => {
-    console.log(`Removing product ${id} from wishlist`);
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const data = await wishApi.getUserWishlist();
+        setWishlistProducts(data);
+      } catch (err: unknown) {
+        toast.error(
+          err instanceof Error ? err.message : "Failed to fetch wishlist"
+        );
+        setWishlistProducts([]);
+      }
+    };
+    fetchWishlist();
+  }, []);
+
+  const handleWishlistChange = (id: string, isWished: boolean) => {
+    if (!isWished) {
+      setWishlistProducts((prev) => prev.filter((p) => p.id !== id));
+    }
   };
 
   const handleMoveAllToBag = () => {
-    console.log("Moving all items to bag");
+    console.log("Move all to bag clicked");
   };
 
   return (
@@ -38,8 +59,8 @@ const WishList: React.FC = () => {
             <ProductCard
               key={product.id}
               product={product}
-              showRemove={true}
-              onRemove={handleRemoveFromWishlist}
+              variant="wishlist"
+              onWishlistChange={handleWishlistChange}
             />
           ))}
         </div>
@@ -64,7 +85,11 @@ const WishList: React.FC = () => {
         </div>
         <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
           {wishlistProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={product}
+              onWishlistChange={handleWishlistChange}
+            />
           ))}
         </div>
       </section>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { HeartIcon, CartIcon, SearchIcon } from "@/components/icons";
 import routes from "@/config/routes";
@@ -7,6 +7,14 @@ import AccountDropdown from "./AccountDropdown";
 
 const Header = () => {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && search.trim()) {
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    }
+  };
+
   return (
     <header className="w-full border-b-[1px] border-b-gray-200">
       {/* Top bar */}
@@ -47,6 +55,7 @@ const Header = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               placeholder="What are you looking for?"
               className="p-2 text-[12px] w-full"
             />

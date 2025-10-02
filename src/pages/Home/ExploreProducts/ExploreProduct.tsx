@@ -2,21 +2,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Grid } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/grid";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 import SectionHeader from "../components/SectionHeader";
 import ProductCard from "@/components/ProductCard";
-import { useNavigate } from "react-router-dom";
-import routes from "@/config/routes";
-import { useEffect, useState } from "react";
 import { productsApi } from "@/services/productsApi";
-import { cartApi } from "@/services/cartApi";
 import type { ProductHomeResponse } from "@/types/product";
 import Button from "@/components/Button";
-import { toast } from "react-toastify";
 
 const ExploreProducts = () => {
-  const navigate = useNavigate();
-
   const [products, setProducts] = useState<ProductHomeResponse[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +21,10 @@ const ExploreProducts = () => {
       try {
         const res = await productsApi.getExploreProducts();
         setProducts(res);
-      } catch {
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Failed to fetch products"
+        );
         setProducts([]);
       } finally {
         setLoading(false);
@@ -34,6 +32,15 @@ const ExploreProducts = () => {
     };
     fetchProducts();
   }, []);
+
+  const handleWishlistChange = (id: string, isWished: boolean) => {
+    const item = products.find((p) => p.id === id);
+    if (!item) return;
+
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, wish: isWished } : p))
+    );
+  };
 
   return (
     <section className="app-container py-[75px]">
@@ -83,21 +90,8 @@ const ExploreProducts = () => {
               <SwiperSlide key={product.id}>
                 <ProductCard
                   product={product}
-                  onAddToCart={async (id) => {
-                    try {
-                      await cartApi.addToCart(id);
-                      toast.success("Added to cart!");
-                    } catch (err) {
-                      toast.error(
-                        err instanceof Error
-                          ? err.message
-                          : "Add to cart failed"
-                      );
-                    }
-                  }}
-                  onCardClick={() =>
-                    navigate(routes.productDetail.replace(":id", product.id))
-                  }
+                  variant="default"
+                  onWishlistChange={handleWishlistChange}
                 />
               </SwiperSlide>
             ))
