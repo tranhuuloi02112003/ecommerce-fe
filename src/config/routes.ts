@@ -7,6 +7,7 @@ const routes = {
   notFound: "*",
   productDetail: "/product/:id",
   search: "/search",
+  category: "/category/:categoryId",
   ADMIN_HOME: "/admin",
   ADMIN_ORDERS: "/admin/orders",
   ADMIN_PRODUCTS: "/admin/products",

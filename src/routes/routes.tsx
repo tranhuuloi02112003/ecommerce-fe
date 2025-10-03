@@ -11,6 +11,7 @@ import AddProduct from "@/pages/Admin/AddProduct/AddProduct ";
 import EditProduct from "@/pages/Admin/EditProduct/EditProduct";
 import ProductDetail from "@/pages/Home/ProductDetail/ProductDetail";
 import ProductsSearch from "@/pages/ProductsSearch/ProductsSearch";
+import CategoryProducts from "@/pages/CategoryProducts/CategoryProducts";
 
 export interface RouteConfig {
   path: string;
@@ -47,6 +48,10 @@ const publicRoutes: RouteConfig[] = [
   {
     path: routes.search,
     element: <ProductsSearch />,
+  },
+  {
+    path: routes.category,
+    element: <CategoryProducts />,
   },
   {
     path: routes.notFound,

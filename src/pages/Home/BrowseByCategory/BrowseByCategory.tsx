@@ -3,16 +3,23 @@ import { Navigation } from "swiper/modules";
 import { categories } from "@/mock/categories";
 import CategoryCard from "./CategoryCard";
 import "swiper/css";
+import { useNavigate } from "react-router-dom";
 
 import SectionHeader from "../components/SectionHeader";
 
 type Category = {
-  id: number;
+  id: string | number;
   title: string;
   icon: string;
 };
 
 const BrowseByCategory = () => {
+  const navigate = useNavigate();
+  
+  const handleCategoryClick = (categoryId: string | number) => {
+    navigate(`/category/${categoryId}`);
+  };
+  
   return (
     <section className="app-container pt-[75px]">
       <div className="border-b border-black/30 pb-[70px]">
@@ -48,9 +55,12 @@ const BrowseByCategory = () => {
               1024: { slidesPerView: 6, spaceBetween: 20 },
             }}
           >
-            {categories.map((category: Category) => (
+            {categories.map((category) => (
               <SwiperSlide key={category.id}>
-                <CategoryCard category={category} />
+                <CategoryCard 
+                  category={category}
+                  onClick={handleCategoryClick}
+                />
               </SwiperSlide>
             ))}
           </Swiper>

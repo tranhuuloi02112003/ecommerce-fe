@@ -27,6 +27,28 @@ export const productsApi = {
       throw new Error(message);
     }
   },
+  
+  getProductsByCategory: async (
+    categoryId: string,
+    page = 1,
+    size = 8
+  ): Promise<ProductsResponse> => {
+    try {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+      });
+
+      const response = await http.get<ProductsResponse>(
+        `/api/products/category/${categoryId}?${queryParams.toString()}`
+      );
+      return response.data;
+    } catch (error: unknown) {
+      const message = handleApiError(error, "Failed to fetch products by category");
+      console.error("❌ Products by Category API error:", message);
+      throw new Error(message);
+    }
+  },
 
   createProduct: async (
     productData: CreateProductRequest
