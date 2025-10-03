@@ -4,7 +4,6 @@ import type {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from "axios";
-import { de } from "date-fns/locale";
 import { toast } from "react-toastify";
 
 const http: AxiosInstance = axios.create({

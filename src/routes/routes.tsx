@@ -12,13 +12,13 @@ import EditProduct from "@/pages/Admin/EditProduct/EditProduct";
 import ProductDetail from "@/pages/Home/ProductDetail/ProductDetail";
 import ProductsSearch from "@/pages/ProductsSearch/ProductsSearch";
 import CategoryProducts from "@/pages/CategoryProducts/CategoryProducts";
+import ProfilePage from "@/pages/Account/ProfilePage/ProfilePage";
 
 export interface RouteConfig {
   path: string;
   element: React.ReactNode;
   layout?: ComponentType<{ children: ReactNode }> | null;
 }
-
 
 const publicRoutes: RouteConfig[] = [
   {
@@ -53,6 +53,11 @@ const publicRoutes: RouteConfig[] = [
     path: routes.category,
     element: <CategoryProducts />,
   },
+  {
+    path: routes.accountProfile,
+    element: <ProfilePage />,
+  },
+
   {
     path: routes.notFound,
     element: <NotFoundPage />,

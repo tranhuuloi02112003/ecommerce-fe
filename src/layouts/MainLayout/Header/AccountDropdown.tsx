@@ -10,6 +10,7 @@ import {
 import authApi from "../../../services/authApi";
 import { handleApiError } from "../../../utils/errorHandler";
 import { toast } from "react-toastify";
+import routes from "@/config/routes";
 
 const AccountDropdown = () => {
 
@@ -63,7 +64,7 @@ const AccountDropdown = () => {
           <MenuItem>
             <Link
               className="flex items-center gap-3 px-4 py-3 rounded-md text-white data-[focus]:bg-white/20"
-              to="/account"
+              to={routes.accountProfile}
             >
               <span className="w-[30px] flex items-center justify-center">
                 <svg
@@ -89,7 +90,7 @@ const AccountDropdown = () => {
                   />
                 </svg>
               </span>
-              Manage My Account
+              My Profile
             </Link>
           </MenuItem>
           <MenuItem>

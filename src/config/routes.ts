@@ -8,6 +8,7 @@ const routes = {
   productDetail: "/product/:id",
   search: "/search",
   category: "/category/:categoryId",
+  accountProfile: "/account/profile",
   ADMIN_HOME: "/admin",
   ADMIN_ORDERS: "/admin/orders",
   ADMIN_PRODUCTS: "/admin/products",
