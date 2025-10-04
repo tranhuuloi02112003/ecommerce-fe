@@ -30,44 +30,38 @@ export const signUpSchema = z.object({
     .max(50, "Password must not exceed 50 characters"),
 });
 
-export const profileSchema = z
+export const profileSchema = z.object({
+  firstName: z
+    .string()
+    .min(2, "First name must be at least 2 characters")
+    .max(50, "First name must not exceed 50 characters"),
+  lastName: z
+    .string()
+    .min(2, "Last name must be at least 2 characters")
+    .max(50, "Last name must not exceed 50 characters"),
+  email: z.string(),
+  address: z
+    .string()
+    .max(255, "Address must not exceed 255 characters")
+    .optional(),
+});
+
+export const passwordChangeSchema = z
   .object({
-    firstName: z
+    currentPassword: z
       .string()
-      .min(2, "First name must be at least 2 characters")
-      .max(50, "First name must not exceed 50 characters"),
-    lastName: z
-      .string()
-      .min(2, "Last name must be at least 2 characters")
-      .max(50, "Last name must not exceed 50 characters"),
-    email: z.string(),
-    address: z
-      .string()
-      .min(5, "Address must be at least 5 characters")
-      .max(100, "Address must not exceed 100 characters"),
-    currentPassword: z.string().optional(),
+      .min(6, "Current password must be 6-64 characters")
+      .max(64, "Current password must be 6-64 characters"),
     newPassword: z
       .string()
-      .min(6, "New password must be at least 6 characters")
-      .max(50, "New password must not exceed 50 characters")
-      .optional(),
-    confirmPassword: z.string().optional(),
+      .min(6, "New password must be 6-64 characters")
+      .max(64, "New password must be 6-64 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
-  .refine(
-    (data) => {
-      if (!data.currentPassword && !data.newPassword && !data.confirmPassword) {
-        return true;
-      }
-      if (data.currentPassword) {
-        return data.newPassword === data.confirmPassword;
-      }
-      return true;
-    },
-    {
-      message: "Passwords don't match",
-      path: ["confirmPassword"],
-    }
-  );
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export const addProductSchema = z.object({
   name: z
@@ -87,4 +81,6 @@ export const addProductSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
+export type PasswordChangeFormData = z.infer<typeof passwordChangeSchema>;
+export type profileSchema = z.infer<typeof profileSchema>;
 export type AddProductFormData = z.infer<typeof addProductSchema>;
