@@ -3,13 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Button from "@/components/Button/Button";
+import userApi from "@/services/userApi";
+import { useAuth } from "@/hooks/useAuth.ts";
 import {
   profileSchema,
   passwordChangeSchema,
   type ProfileFormData,
   type PasswordChangeFormData,
 } from "@/utils/validation";
-import userApi from "@/services/userApi";
 
 import { AvatarUpload } from "./AvatarUpload";
 import { Link } from "react-router-dom";
@@ -18,6 +19,7 @@ import ProfileFormInput from "./FormInputs/ProfileFormInput";
 import PasswordFormInput from "./FormInputs/PasswordFormInput";
 
 export default function ProfilePage() {
+  const { user, loadingUser, refreshMe } = useAuth();
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
@@ -43,37 +45,28 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setIsProfileLoading(true);
-        const profileData = await userApi.getUserProfile();
+    if (user) {
+      profileForm.reset({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        address: user.address || "",
+      });
 
-        profileForm.reset({
-          firstName: profileData.firstName,
-          lastName: profileData.lastName,
-          email: profileData.email,
-          address: profileData.address,
-        });
-
-        setAvatarUrl(profileData.avatarUrl);
-      } catch (error) {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch profile data. Please try again."
-        );
-      } finally {
-        setIsProfileLoading(false);
-      }
-    };
-    fetchUserProfile();
-  }, [profileForm.reset]);
+      setAvatarUrl(user.avatarUrl);
+      setIsProfileLoading(false);
+    } else {
+      setIsProfileLoading(loadingUser);
+    }
+  }, [user, loadingUser, profileForm]);
 
   const onProfileSubmit = async (data: ProfileFormData) => {
     try {
       const { firstName, lastName, address } = data;
       await userApi.updateUserProfile({ firstName, lastName, address });
       toast.success("Profile updated successfully!");
+
+      await refreshMe();
     } catch (error: unknown) {
       toast.error(
         error instanceof Error
@@ -105,6 +98,8 @@ export default function ProfilePage() {
       const result = await userApi.uploadAvatar(file);
       setAvatarUrl(result.avatarUrl);
       toast.success("Avatar updated successfully!");
+
+      await refreshMe();
     } catch (error) {
       toast.error(
         error instanceof Error

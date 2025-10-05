@@ -7,49 +7,66 @@ import {
   MenuItem,
   Transition,
 } from "@headlessui/react";
-import authApi from "../../../services/authApi";
-import { handleApiError } from "../../../utils/errorHandler";
+import { handleApiError } from "@/utils/errorHandler";
 import { toast } from "react-toastify";
 import routes from "@/config/routes";
+import { useAuth } from "@/hooks/useAuth.ts";
 
 const AccountDropdown = () => {
+  const { user, loadingUser, logout } = useAuth();
+
+  if (loadingUser || !user) {
+    return null;
+  }
+  console.log("User in AccountDropdown:", user);
 
   const handleLogout = async () => {
     try {
-      await authApi.logout();
+      await logout();
       toast.success("Logout successful!");
     } catch (error: unknown) {
-      const errorMessage = handleApiError(error, "Logout failed. Please try again.");
+      const errorMessage = handleApiError(
+        error,
+        "Logout failed. Please try again."
+      );
       toast.error(errorMessage);
     }
   };
 
   return (
     <Menu as="div" className="relative">
-      <MenuButton className="w-9 h-9 rounded-full text-white">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 32 32"
-          fill="none"
-        >
-          <rect width="32" height="32" rx="16" fill="#DB4444" />
-          <path
-            d="M21 23V21.3333C21 20.4493 20.691 19.6014 20.1408 18.9763C19.5907 18.3512 18.8446 18 18.0667 18H12.9333C12.1554 18 11.4093 18.3512 10.8592 18.9763C10.309 19.6014 10 20.4493 10 21.3333V23"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <MenuButton className="w-9 h-9 rounded-full text-white overflow-hidden">
+        {user.avatarUrl ? (
+          <img
+            src={user.avatarUrl}
+            alt={`${user.firstName} ${user.lastName}`}
+            className="w-full h-full object-cover"
           />
-          <path
-            d="M16 15C17.6569 15 19 13.6569 19 12C19 10.3431 17.6569 9 16 9C14.3431 9 13 10.3431 13 12C13 13.6569 14.3431 15 16 15Z"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+          >
+            <rect width="32" height="32" rx="16" fill="#DB4444" />
+            <path
+              d="M21 23V21.3333C21 20.4493 20.691 19.6014 20.1408 18.9763C19.5907 18.3512 18.8446 18 18.0667 18H12.9333C12.1554 18 11.4093 18.3512 10.8592 18.9763C10.309 19.6014 10 20.4493 10 21.3333V23"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M16 15C17.6569 15 19 13.6569 19 12C19 10.3431 17.6569 9 16 9C14.3431 9 13 10.3431 13 12C13 13.6569 14.3431 15 16 15Z"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
       </MenuButton>
       <Transition
         as={Fragment}
@@ -188,7 +205,7 @@ const AccountDropdown = () => {
           </MenuItem>
           <div className="my-1 h-px bg-gray-200" />
           <MenuItem>
-            <button 
+            <button
               onClick={handleLogout}
               className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-md text-white data-[focus]:bg-white/20"
             >

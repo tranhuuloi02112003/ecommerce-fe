@@ -1,16 +1,17 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { loginSchema, type LoginFormData } from "../../utils/validation";
-import { authBanner } from "../../assets/images";
-import routes from "../../config/routes";
+import { loginSchema, type LoginFormData } from "@/utils/validation";
+import { authBanner } from "@/assets/images";
+import routes from "@/config/routes";
 import FormInputAuth from "./FormInputAuth";
 import Button from "@/components/Button/";
-import authApi from "../../services/authApi";
 import { toast } from "react-toastify";
+import { useAuth } from "@/hooks/useAuth.ts";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
@@ -21,14 +22,8 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const loginData = {
-        email: data.email,
-        password: data.password,
-      };
-
-      await authApi.login(loginData);
+      await login(data.email, data.password);
       toast.success("Login successful!");
-
       navigate("/");
     } catch (error: unknown) {
       toast.error(
