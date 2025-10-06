@@ -9,6 +9,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import ProductsList from "@/pages/Admin/ProductsList/ProductsList";
 import AddProduct from "@/pages/Admin/AddProduct/AddProduct ";
 import EditProduct from "@/pages/Admin/EditProduct/EditProduct";
+import OrderList from "@/pages/Admin/OrderList/OrderList";
 import ProductDetail from "@/pages/Home/ProductDetail/ProductDetail";
 import ProductsSearch from "@/pages/ProductsSearch/ProductsSearch";
 import CategoryProducts from "@/pages/CategoryProducts/CategoryProducts";
@@ -73,7 +74,7 @@ const adminRoutes: RouteConfig[] = [
   },
   {
     path: routes.ADMIN_ORDERS,
-    element: <div>Orders</div>,
+    element: <OrderList />,
     layout: AdminLayout,
   },
   {

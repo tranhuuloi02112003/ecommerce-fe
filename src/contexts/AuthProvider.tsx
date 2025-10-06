@@ -5,7 +5,7 @@ import {
   useState,
   createContext,
 } from "react";
-import userApi, { type UserProfile } from "../services/userApi";
+import { userApi, type UserProfile } from "../services/userApi";
 import authApi from "../services/authApi";
 import type { AuthContextValue } from "@/types/auth";
 

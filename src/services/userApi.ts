@@ -26,7 +26,7 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
-const userApi = {
+export const userApi = {
   getUserProfile: async (): Promise<UserProfile> => {
     try {
       const response = await http.get("/api/users/me");
@@ -69,5 +69,3 @@ const userApi = {
     }
   },
 };
-
-export default userApi;

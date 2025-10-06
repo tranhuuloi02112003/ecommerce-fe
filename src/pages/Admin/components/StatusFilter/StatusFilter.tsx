@@ -20,7 +20,7 @@ export default function StatusFilter() {
     <Listbox value={selected} onChange={setSelected}>
       <div className="relative w-[170px]">
         <ListboxButton
-          className="relative w-full p-[12px] rounded-lg bg-[#F4F2F2] 
+          className="relative w-full p-[12px] rounded-lg bg-[#fff] 
                     text-left text-[14px] cursor-pointer flex items-center justify-between"
         >
           <span className="truncate text-gray-800">{selected.label}</span>

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Button from "@/components/Button/Button";
-import userApi from "@/services/userApi";
+import { userApi } from "@/services/userApi";
 import { useAuth } from "@/hooks/useAuth.ts";
 import {
   profileSchema,
