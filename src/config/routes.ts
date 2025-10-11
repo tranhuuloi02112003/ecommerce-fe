@@ -9,6 +9,7 @@ const routes = {
   search: "/search",
   category: "/category/:categoryId",
   accountProfile: "/account/profile",
+  checkout: "/checkout",
   ADMIN_HOME: "/admin",
   ADMIN_ORDERS: "/admin/orders",
   ADMIN_PRODUCTS: "/admin/products",

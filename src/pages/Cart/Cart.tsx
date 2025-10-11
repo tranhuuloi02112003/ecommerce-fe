@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "@/components/Button";
 import routes from "@/config/routes";
 import { cartApi, type CartResponse } from "@/services/cartApi";
 import { toast } from "react-toastify";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartResponse[]>([]);
   const [couponCode, setCouponCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -356,7 +358,24 @@ const Cart = () => {
               </div>
 
               <div className="flex justify-center mt-6 mb-6">
-                <Button variant="primary" className="w-[266px]">
+                <Button
+                  variant="primary"
+                  className="w-[266px]"
+                  onClick={() => {
+                    navigate("/checkout", {
+                      state: {
+                        items: cartItems.map((item) => ({
+                          id: item.productId,
+                          name: item.productName,
+                          price: item.price,
+                          qty: item.quantity,
+                          image: item.productMainImage,
+                        })),
+                        subtotal,
+                      },
+                    });
+                  }}
+                >
                   Proceed to checkout
                 </Button>
               </div>

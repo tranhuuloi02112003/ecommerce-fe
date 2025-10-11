@@ -15,8 +15,7 @@ import {
 import { AvatarUpload } from "./AvatarUpload";
 import { Link } from "react-router-dom";
 import routes from "@/config/routes";
-import ProfileFormInput from "./FormInputs/ProfileFormInput";
-import PasswordFormInput from "./FormInputs/PasswordFormInput";
+import { TextInput, PasswordInput } from "@/components/FormInputs";
 
 export default function ProfilePage() {
   const { user, loadingUser, refreshMe } = useAuth();
@@ -176,7 +175,7 @@ export default function ProfilePage() {
                 onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
                 className="space-y-[20px]"
               >
-                <PasswordFormInput
+                <PasswordInput
                   name="currentPassword"
                   register={passwordForm.register}
                   error={passwordForm.formState.errors.currentPassword}
@@ -184,7 +183,7 @@ export default function ProfilePage() {
                   label="Current Password"
                 />
 
-                <PasswordFormInput
+                <PasswordInput
                   name="newPassword"
                   register={passwordForm.register}
                   error={passwordForm.formState.errors.newPassword}
@@ -192,7 +191,7 @@ export default function ProfilePage() {
                   label="New Password"
                 />
 
-                <PasswordFormInput
+                <PasswordInput
                   name="confirmPassword"
                   register={passwordForm.register}
                   error={passwordForm.formState.errors.confirmPassword}
@@ -227,7 +226,7 @@ export default function ProfilePage() {
                 className="space-y-[20px]"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-[20px]">
-                  <ProfileFormInput
+                  <TextInput
                     label="First Name"
                     name="firstName"
                     register={profileForm.register}
@@ -235,7 +234,7 @@ export default function ProfilePage() {
                     placeholder="Enter your first name"
                   />
 
-                  <ProfileFormInput
+                  <TextInput
                     label="Last Name"
                     name="lastName"
                     register={profileForm.register}
@@ -243,7 +242,7 @@ export default function ProfilePage() {
                     placeholder="Enter your last name"
                   />
 
-                  <ProfileFormInput
+                  <TextInput
                     label="Email"
                     name="email"
                     register={profileForm.register}
@@ -253,7 +252,7 @@ export default function ProfilePage() {
                     disabled={true}
                   />
 
-                  <ProfileFormInput
+                  <TextInput
                     label="Address"
                     name="address"
                     register={profileForm.register}

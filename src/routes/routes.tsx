@@ -14,6 +14,7 @@ import ProductDetail from "@/pages/Home/ProductDetail/ProductDetail";
 import ProductsSearch from "@/pages/ProductsSearch/ProductsSearch";
 import CategoryProducts from "@/pages/CategoryProducts/CategoryProducts";
 import ProfilePage from "@/pages/Account/ProfilePage/ProfilePage";
+import Checkout from "@/pages/Checkout";
 
 export interface RouteConfig {
   path: string;
@@ -57,6 +58,9 @@ const publicRoutes: RouteConfig[] = [
   {
     path: routes.accountProfile,
     element: <ProfilePage />,
+  },  {
+    path: routes.checkout,
+    element: <Checkout />,
   },
 
   {
