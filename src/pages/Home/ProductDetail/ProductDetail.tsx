@@ -12,7 +12,7 @@ const ProductDetail = () => {
     name: string;
     description: string;
     price: number;
-    imageUrls: string[];
+    images: { key: string; url: string }[];
   } | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
@@ -50,7 +50,7 @@ const ProductDetail = () => {
     <div className="app-container mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-5 gap-20">
       <div className="lg:col-span-3 flex gap-6 h-[500px]">
         <div className="grid grid-rows-4 gap-5 w-63 h-full">
-          {product.imageUrls.map((img, idx) => (
+          {product.images.map((img, idx) => (
             <div
               key={idx}
               className={`cursor-pointer border rounded-lg overflow-hidden transition-shadow duration-200
@@ -62,7 +62,7 @@ const ProductDetail = () => {
               onClick={() => setActiveImage(idx)}
             >
               <img
-                src={img}
+                src={img.url}
                 alt={`thumbnail ${idx}`}
                 className="w-full h-full object-cover"
               />
@@ -72,7 +72,7 @@ const ProductDetail = () => {
 
         <div className="flex-1 rounded-lg overflow-hidden">
           <img
-            src={product.imageUrls[activeImage]}
+            src={product.images[activeImage].url}
             alt={product.name}
             className="w-full h-full object-cover"
           />

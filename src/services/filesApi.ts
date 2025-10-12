@@ -2,7 +2,7 @@ import http from "./http";
 import { handleApiError } from "@/utils/errorHandler";
 
 export const filesApi = {
-  uploadFiles: async (files: File[]): Promise<string[]> => {
+  uploadFiles: async (files: File[]): Promise<{ key: string; url: string }[]> => {
     try {
       const formData = new FormData();
 
@@ -10,7 +10,7 @@ export const filesApi = {
         formData.append("files", file);
       });
 
-      const response = await http.post<string[]>("/api/files", formData, {
+      const response = await http.post<{ key: string; url: string }[]>("/api/files", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

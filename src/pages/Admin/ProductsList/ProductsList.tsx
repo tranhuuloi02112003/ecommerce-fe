@@ -139,7 +139,7 @@ export default function ProductsList() {
                       <td className="px-[16px] py-[12px]">
                         <div className="flex items-center gap-[12px] min-w-0">
                           <img
-                            src={p.imageUrl}
+                            src={p.mainImage}
                             alt={p.name}
                             className="w-[40px] h-[40px] rounded-[8px] object-cover flex-shrink-0"
                           />

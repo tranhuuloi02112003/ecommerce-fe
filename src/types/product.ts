@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   categoryName: string;
   imageUrl: string;
+  mainImage: string;
 }
 
 export interface ProductsRequest {
@@ -31,7 +32,7 @@ export interface CreateProductRequest {
   categoryId: string;
   price: number;
   quantity: number;
-  imageUrls: string[];
+  imageKeys: string[];
 }
 
 export interface CreateProductResponse {
@@ -41,7 +42,11 @@ export interface CreateProductResponse {
   categoryId: string;
   price: number;
   quantity: number;
-  imageUrls: string[];
+  imageUrls: string[] | null;
+  images: {
+    key: string;
+    url: string;
+  }[];
   createdAt: string;
 }
 

@@ -116,7 +116,7 @@ export const productsApi = {
     name: string;
     description: string;
     price: number;
-    imageUrls: string[];
+    images: { key: string; url: string }[];
   }> => {
     try {
       const response = await http.get(`/api/products/${id}`);

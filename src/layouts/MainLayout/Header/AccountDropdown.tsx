@@ -15,6 +15,10 @@ import { useAuth } from "@/hooks/useAuth.ts";
 const AccountDropdown = () => {
   const { user, loadingUser, logout } = useAuth();
 
+  
+  const defaultAvatar =
+    "https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff";
+
   if (loadingUser || !user) {
     return null;
   }
@@ -36,37 +40,14 @@ const AccountDropdown = () => {
   return (
     <Menu as="div" className="relative">
       <MenuButton className="w-9 h-9 rounded-full text-white overflow-hidden">
-        {user.avatarUrl ? (
-          <img
-            src={user.avatarUrl}
-            alt={`${user.firstName} ${user.lastName}`}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
-            fill="none"
-          >
-            <rect width="32" height="32" rx="16" fill="#DB4444" />
-            <path
-              d="M21 23V21.3333C21 20.4493 20.691 19.6014 20.1408 18.9763C19.5907 18.3512 18.8446 18 18.0667 18H12.9333C12.1554 18 11.4093 18.3512 10.8592 18.9763C10.309 19.6014 10 20.4493 10 21.3333V23"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M16 15C17.6569 15 19 13.6569 19 12C19 10.3431 17.6569 9 16 9C14.3431 9 13 10.3431 13 12C13 13.6569 14.3431 15 16 15Z"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
+        <img
+          src={user.avatarUrl || defaultAvatar}
+          alt={`${user.firstName} ${user.lastName}`}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = defaultAvatar;
+          }}
+        />
       </MenuButton>
       <Transition
         as={Fragment}

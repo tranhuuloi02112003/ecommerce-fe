@@ -60,10 +60,10 @@ export const userApi = {
         throw new Error("Failed to upload avatar: No URL returned");
       }
 
-      const avatarUrl = fileUrls[0];
-      await http.put("/api/users/me/avatar", { avatarUrl });
+      const avatar = fileUrls[0];
+      await http.put("/api/users/me/avatar", { avatarKey: avatar.key });
 
-      return { avatarUrl };
+      return { avatarUrl: avatar.url };
     } catch (error) {
       throw new Error(handleApiError(error, "Failed to upload avatar"));
     }

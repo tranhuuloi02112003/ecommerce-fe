@@ -83,7 +83,10 @@ export const addProductSchema = z.object({
   category: z.string().min(1, "Category is required"),
   price: z.number().min(0.01, "Price must be greater than 0"),
   quantity: z.number().min(0, "Quantity must be 0 or greater"),
-  images: z.array(z.string()).length(4, "Exactly 4 images are required"),
+  images: z.array(z.object({
+    key: z.string(),
+    url: z.string()
+  })).length(4, "Exactly 4 images are required"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

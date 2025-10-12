@@ -105,7 +105,7 @@ const AddProduct = () => {
         categoryId: data.category,
         price: data.price,
         quantity: data.quantity,
-        imageUrls: data.images,
+        imageKeys: data.images.map(img => img.key), // Extract the key from each image to match API expectations
       };
 
       await productsApi.createProduct(productData);
@@ -136,10 +136,13 @@ const AddProduct = () => {
 
       try {
         setIsUploadingImages(true);
-        const uploadedUrls = await filesApi.uploadFiles(files);
+        const uploadedFiles = await filesApi.uploadFiles(files);
 
-        // Thay thế toàn bộ với ảnh mới
-        const newImages = uploadedUrls.slice(0, 4); // Đảm bảo chỉ có 4 ảnh
+
+        const newImages = uploadedFiles.slice(0, 4).map(file => ({
+          key: file.key,
+          url: file.url
+        }));
         setValue("images", newImages, { shouldValidate: true });
 
         toast.success(`${files.length} image(s) replaced successfully!`);
@@ -168,9 +171,14 @@ const AddProduct = () => {
     try {
       setIsUploadingImages(true);
 
-      const uploadedUrls = await filesApi.uploadFiles(validFiles);
+      const uploadedFiles = await filesApi.uploadFiles(validFiles);
+      
+      const newImages = uploadedFiles.map(file => ({
+        key: file.key,
+        url: file.url
+      }));
 
-      const updatedImages = [...currentImages, ...uploadedUrls];
+      const updatedImages = [...currentImages, ...newImages];
       setValue("images", updatedImages, { shouldValidate: true });
 
       toast.success(`${validFiles.length} image(s) uploaded successfully!`);
@@ -184,10 +192,8 @@ const AddProduct = () => {
   };
 
   const removeImage = (index: number) => {
-    // Get current images from RHF
     const currentImages = getValues("images") || [];
 
-    // Remove from RHF images array
     const updatedImages = currentImages.filter((_, i) => i !== index);
     setValue("images", updatedImages, { shouldValidate: true });
   };
@@ -354,51 +360,94 @@ const AddProduct = () => {
 
             {/* Right Column - Image Upload */}
             <div className="space-y-6">
-              {/* Main Image Preview */}
+              {/* Image Preview Grid */}
               <div>
                 <label className="block text-[14px] font-medium text-gray-700 mb-2">
                   Product Images
                 </label>
-                <div className="w-full h-[250px] border-2 border-dashed border-gray-300 rounded-[8px] bg-gray-50 flex items-center justify-center relative">
+                <div className="w-full h-[250px] border-2 border-dashed border-gray-300 rounded-[8px] bg-gray-50 relative">
                   {isUploadingImages ? (
-                    <div className="text-center">
-                      <div className="w-[48px] h-[48px] mx-auto mb-2 bg-blue-100 rounded-[8px] flex items-center justify-center">
-                        <div className="w-[24px] h-[24px] border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="flex items-center justify-center h-full w-full">
+                      <div className="text-center">
+                        <div className="w-[48px] h-[48px] mx-auto mb-2 bg-blue-100 rounded-[8px] flex items-center justify-center">
+                          <div className="w-[24px] h-[24px] border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                        <p className="text-[14px] text-blue-600 font-medium">
+                          Uploading images...
+                        </p>
+                        <p className="text-[12px] text-gray-400">Please wait</p>
                       </div>
-                      <p className="text-[14px] text-blue-600 font-medium">
-                        Uploading images...
-                      </p>
-                      <p className="text-[12px] text-gray-400">Please wait</p>
                     </div>
                   ) : watchedImages.length > 0 ? (
-                    <img
-                      src={watchedImages[0]}
-                      alt="Main preview"
-                      className="w-full h-full object-cover rounded-[8px]"
-                    />
-                  ) : (
-                    <div className="text-center">
-                      <div className="w-[48px] h-[48px] mx-auto mb-2 bg-gray-200 rounded-[8px] flex items-center justify-center">
-                        <svg
-                          className="w-[24px] h-[24px] text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                    <div className="grid grid-cols-2 grid-rows-2 h-full gap-1 p-1">
+                      {Array(4).fill(null).map((_, index) => (
+                        <div 
+                          key={index} 
+                          className="relative bg-gray-100 rounded-md overflow-hidden flex items-center justify-center group cursor-pointer"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
+                          {index < watchedImages.length ? (
+                            <>
+                              <div className="relative w-full h-full">
+                                <img
+                                  src={watchedImages[index].url}
+                                  alt={`Product image ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-200"></div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="absolute top-1 right-1 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 hover:opacity-100 transition-all duration-200 flex items-center justify-center text-[12px] font-bold shadow-sm z-10"
+                              >
+                                ×
+                              </button>
+                            </>
+                          ) : (
+                            <div className="flex items-center justify-center h-full w-full text-gray-300">
+                              <svg
+                                className="w-[24px] h-[24px]"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-full w-full">
+                      <div className="text-center">
+                        <div className="w-[48px] h-[48px] mx-auto mb-2 bg-gray-200 rounded-[8px] flex items-center justify-center">
+                          <svg
+                            className="w-[24px] h-[24px] text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </div>
+                        <p className="text-[14px] text-gray-500">
+                          Drop your images here, or browse
+                        </p>
+                        <p className="text-[12px] text-gray-400">
+                          jpeg, png are allowed
+                        </p>
                       </div>
-                      <p className="text-[14px] text-gray-500">
-                        Drop your images here, or browse
-                      </p>
-                      <p className="text-[12px] text-gray-400">
-                        jpeg, png are allowed
-                      </p>
                     </div>
                   )}
                 </div>
@@ -406,20 +455,48 @@ const AddProduct = () => {
 
               {/* Image Upload Input */}
               <div>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  disabled={isUploadingImages}
-                  className="w-full px-[16px] py-[12px] border border-gray-200 rounded-[8px] text-[14px] outline-none focus:border-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                />
-                <p className="mt-1 text-[12px] text-gray-500">
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="file-input"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    disabled={isUploadingImages}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="file-input"
+                    className={`flex items-center justify-center w-full px-[16px] py-[12px] border border-gray-200 rounded-[8px] text-[14px] cursor-pointer ${
+                      isUploadingImages ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <svg
+                      className="w-5 h-5 mr-2 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                      />
+                    </svg>
+                    {isUploadingImages ? "Uploading..." : "Choose Images"}
+                  </label>
+                </div>
+              </div>
+
+              {/* Image Upload Status */}
+              <div>
+                <p className={`text-sm ${watchedImages.length === 4 ? 'text-green-600' : 'text-gray-500'}`}>
                   {isUploadingImages
                     ? "Uploading images..."
                     : watchedImages.length >= 4
-                    ? "4 images uploaded (required)"
-                    : `4 images required (${watchedImages.length}/4)`}
+                    ? "✓ All required images uploaded (4/4)"
+                    : `Upload status: ${watchedImages.length}/4 images`}
                 </p>
                 {errors.images && (
                   <p className="mt-1 text-[12px] text-red-500">
@@ -427,69 +504,6 @@ const AddProduct = () => {
                   </p>
                 )}
               </div>
-
-              {/* File List */}
-              {watchedImages.length > 0 && (
-                <div>
-                  <label className="block text-[14px] font-medium text-gray-700 mb-2">
-                    Product Images ({watchedImages.length}/4)
-                  </label>
-                  <div className="space-y-2">
-                    {watchedImages.map((imageUrl, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-md border border-gray-200 group hover:bg-gray-100 transition-colors"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center overflow-hidden">
-                            <img
-                              src={imageUrl}
-                              alt={`Product image ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[14px] font-medium text-gray-900 truncate">
-                              {(() => {
-                                try {
-                                  // Extract filename from URL
-                                  const url = new URL(imageUrl);
-                                  const pathname = url.pathname;
-                                  const segments = pathname.split("/");
-                                  const lastSegment =
-                                    segments[segments.length - 1];
-
-                                  if (
-                                    lastSegment &&
-                                    lastSegment.includes(".")
-                                  ) {
-                                    return lastSegment;
-                                  }
-
-                                  return `Product Image ${index + 1}`;
-                                } catch {
-                                  return `Product Image ${index + 1}`;
-                                }
-                              })()}
-                            </p>
-                            <p className="text-[12px] text-gray-500">
-                              Product image
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          disabled={isUploadingImages}
-                          className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-[14px] font-bold shadow-md disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Action Buttons */}
               <div className="flex gap-4 pt-4">

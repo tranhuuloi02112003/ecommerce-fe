@@ -94,6 +94,7 @@ export default function ProfilePage() {
   const handleAvatarChange = async (file: File) => {
     try {
       setIsAvatarUploading(true);
+      console.log("Uploading avatar:", file);
       const result = await userApi.uploadAvatar(file);
       setAvatarUrl(result.avatarUrl);
       toast.success("Avatar updated successfully!");

@@ -48,7 +48,6 @@ const Cart = () => {
       });
       setCartItems(updated);
     } catch (err) {
-      // cartApi.updateCart đã xử lý lỗi bằng handleApiError
       toast.error(
         err instanceof Error ? err.message : "Failed to update cart item"
       );
@@ -63,7 +62,6 @@ const Cart = () => {
       const updated = await cartApi.removeItem(productId);
       setCartItems(updated);
     } catch (err) {
-      // cartApi.removeItem đã xử lý lỗi bằng handleApiError
       toast.error(
         err instanceof Error ? err.message : "Failed to remove cart item"
       );
