@@ -8,6 +8,7 @@ import type { Product } from "@/types/product";
 import { toast } from "react-toastify";
 import routes from "@/config/routes";
 import useDebounce from "@/hooks/useDebounce";
+import DeleteModal from "@/components/Modal/DeleteModal";
 
 // -------- Helpers --------
 const formatPrice = (n: number) => `$${n.toLocaleString()}`;
@@ -19,6 +20,9 @@ export default function ProductsList() {
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -67,10 +71,35 @@ export default function ProductsList() {
     console.log("View product:", productId);
   };
 
-  const handleDeleteProduct = (productId: string) => {
-    console.log("Delete product:", productId);
+  const handleDeleteProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedProduct) return;
+
+    try {
+      setIsDeleting(true);
+      await productsApi.deleteProductById(selectedProduct.id);
+      toast.success(`Product "${selectedProduct.name}" deleted successfully`);
+
+      // Refresh products list
+      fetchProducts();
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+      toast.error("Failed to delete product. Please try again.");
+    } finally {
+      setIsDeleting(false);
+      setIsModalOpen(false);
+      setSelectedProduct(null);
+    }
+  };
   return (
     <div className="min-h-screen">
       <main className="mx-auto w-full max-w-[1200px]">
@@ -177,7 +206,7 @@ export default function ProductsList() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDeleteProduct(p.id)}
+                            onClick={() => handleDeleteProduct(p)}
                             className="rounded-[8px] px-[12px] py-[6px] text-red-600 hover:bg-red-50"
                           >
                             Delete
@@ -197,6 +226,14 @@ export default function ProductsList() {
             </table>
           </div>
         )}
+        <DeleteModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmDelete}
+          itemName={selectedProduct?.name}
+          itemType="product"
+          isLoading={isDeleting}
+        />
 
         {!loading && (
           <Pagination

@@ -27,7 +27,7 @@ export const productsApi = {
       throw new Error(message);
     }
   },
-  
+
   getProductsByCategory: async (
     categoryId: string,
     page = 1,
@@ -44,7 +44,10 @@ export const productsApi = {
       );
       return response.data;
     } catch (error: unknown) {
-      const message = handleApiError(error, "Failed to fetch products by category");
+      const message = handleApiError(
+        error,
+        "Failed to fetch products by category"
+      );
       console.error("❌ Products by Category API error:", message);
       throw new Error(message);
     }
@@ -124,6 +127,16 @@ export const productsApi = {
     } catch (error: unknown) {
       const message = handleApiError(error, "Failed to fetch product detail");
       console.error("❌ Product Detail API error:", message);
+      throw new Error(message);
+    }
+  },
+
+  deleteProductById: async (id: string): Promise<void> => {
+    try {
+      await http.delete(`/api/products/${id}`);
+    } catch (error: unknown) {
+      const message = handleApiError(error, "Failed to delete product");
+      console.error("❌ Delete Product API error:", message);
       throw new Error(message);
     }
   },
