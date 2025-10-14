@@ -1,88 +1,98 @@
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import BillingForm from "./BillingForm";
-import OrderSummary from "./OrderSummary";
-import { type CheckoutForm } from "@/utils/validation";
 import Button from "@/components/Button";
-
-type CartItem = {
-  id: string | number;
-  name: string;
-  price: number;
-  qty: number;
-  image: string;
-};
+import ShippingAddressSection from "./components/ShippingAddressSection";
+import ProductListSection from "./components/ProductListSection";
+import PaymentMethodSection from "./components/PaymentMethodSection";
+import NotesSection from "./components/NotesSection";
+import type { CartResponse } from "@/types/cart";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation() as {
-    state?: { items: CartItem[]; subtotal: number };
+    state?: { 
+      cartItems: CartResponse[];
+      subtotal: number 
+    };
   };
 
-  if (!location.state?.items?.length) {
-    navigate("/cart", { replace: true });
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("cod");
+  const [orderNote, setOrderNote] = useState<string>("");
+
+  useEffect(() => {
+    if (!location.state?.cartItems?.length) {
+      navigate("/cart", { replace: true });
+    }
+  }, [location.state, navigate]);
+
+  // If no items, don't render anything
+  if (!location.state?.cartItems?.length) {
     return null;
   }
 
-  const { items, subtotal } = location.state;
+  const items = location.state?.cartItems || [];
+  const subtotal = location.state?.subtotal || 0;
   const shipping = 0;
   const total = subtotal + shipping;
 
-  const paymentMethods = [
-    { id: "bank", label: "Bank" },
-    { id: "cod", label: "Cash on delivery" },
-  ] as const;
+  const handlePlaceOrder = () => {
+    if (!selectedAddressId) {
+      toast.error("Please select a shipping address");
+      return;
+    }
 
-  const handleFormSubmit = (billingData: CheckoutForm) => {
     const payload = {
-      billing: billingData,
-      paymentMethod: "COD",
+      shippingAddressId: selectedAddressId,
+      paymentMethod: selectedPaymentMethod,
       items,
+      note: orderNote,
       totals: { subtotal, shipping, total },
     };
+
     console.log("Order payload:", payload);
     toast.success("Order placed successfully");
   };
 
   return (
-    <div className="min-h-screen bg-white py-14">
-      <div className="app-container px-4">
-        <h1 className="mb-4 text-[36px] font-normal tracking-[1.44px] ">
-          Billing Details
-        </h1>
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_470px]">
-          <section className="max-w-[450px]">
-            <BillingForm onSubmit={handleFormSubmit} />
-          </section>
+    <div className="min-h-screen bg-white py-32">
+      <div className="mx-auto max-w-[1200px] px-4">
+        <div className="rounded-[12px]">
+          {/* Shipping Address Section */}
+          <ShippingAddressSection 
+            selectedAddressId={selectedAddressId}
+            onAddressSelect={setSelectedAddressId}
+          />
 
-          <div>
-            <OrderSummary
-              items={items}
-              subtotal={subtotal}
-              shipping={shipping}
-              total={total}
-            />
-            <div className="mt-8">
-              <div className="space-y-3">
-                {paymentMethods.map((m) => (
-                  <label
-                    key={m.id}
-                    className="flex cursor-pointer items-center gap-3 text-[15px] text-gray-800"
-                  >
-                    <input
-                      type="radio"
-                      name="payment"
-                      value={m.id}
-                      defaultChecked={m.id === "cod"}
-                      className="h-4 w-4 accent-[#DB4444]"
-                    />
-                    <span>{m.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+          {/* Product List */}
+          <ProductListSection 
+            items={items}
+            subtotal={subtotal}
+            shipping={shipping}
+            total={total}
+          />
 
-            <Button className="w-[250px] mt-8">Place Order</Button>
+          {/* Payment Methods */}
+          <PaymentMethodSection
+            selectedPaymentMethod={selectedPaymentMethod}
+            onPaymentMethodChange={setSelectedPaymentMethod}
+          />
+
+          {/* Additional Notes */}
+          <NotesSection
+            value={orderNote}
+            onChange={setOrderNote}
+          />
+
+          {/* Place Order Button */}
+          <div className="text-center sm:text-right">
+            <Button
+              onClick={handlePlaceOrder}
+              className="px-[32px] py-[12px] text-[16px]"
+            >
+              Place Order
+            </Button>
           </div>
         </div>
       </div>

@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/Button";
 import routes from "@/config/routes";
-import { cartApi, type CartResponse } from "@/services/cartApi";
+import { cartApi} from "@/services/cartApi";
 import { toast } from "react-toastify";
+import type { CartResponse } from "@/types/cart";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -362,13 +363,7 @@ const Cart = () => {
                   onClick={() => {
                     navigate("/checkout", {
                       state: {
-                        items: cartItems.map((item) => ({
-                          id: item.productId,
-                          name: item.productName,
-                          price: item.price,
-                          qty: item.quantity,
-                          image: item.productMainImage,
-                        })),
+                        cartItems,
                         subtotal,
                       },
                     });

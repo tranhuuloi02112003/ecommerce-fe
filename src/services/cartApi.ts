@@ -1,18 +1,6 @@
 import { handleApiError } from "@/utils/errorHandler";
 import http from "./http";
-
-export interface CartResponse {
-  productId: string;
-  productName: string;
-  productMainImage: string;
-  price: number;
-  quantity: number;
-}
-
-export interface CartRequest {
-  productId: string;
-  quantity: number;
-}
+import type { CartResponse, CartRequest } from "@/types/cart";
 
 export const cartApi = {
   getCart: async (): Promise<CartResponse[]> => {

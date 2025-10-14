@@ -46,14 +46,6 @@ export const profileSchema = z.object({
     .optional(),
 });
 
-export const checkoutSchema = z.object({
-  firstName: z.string().min(2, "First name is required"),
-  streetAddress: z.string().min(3, "Street address is required"),
-  phone: z.string().min(8, "Invalid phone number"),
-  email: z.string().email("Invalid email"),
-  note: z.string().max(500).optional(),
-});
-
 export const passwordChangeSchema = z
   .object({
     currentPassword: z
@@ -88,11 +80,17 @@ export const addProductSchema = z.object({
     url: z.string()
   })).length(4, "Exactly 4 images are required"),
 });
+export const addressSchema = z.object({
+  name: z.string().min(2, 'Name is required'),
+  phone: z.string().min(9, 'Phone number is required'),
+  streetAddress: z.string().min(5, 'Street address is required'),
+  city: z.string().min(2, 'City is required'),
+});
 
+export type AddressFormData = z.infer<typeof addressSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type PasswordChangeFormData = z.infer<typeof passwordChangeSchema>;
 export type profileSchema = z.infer<typeof profileSchema>;
 export type AddProductFormData = z.infer<typeof addProductSchema>;
-export type CheckoutForm = z.infer<typeof checkoutSchema>;
