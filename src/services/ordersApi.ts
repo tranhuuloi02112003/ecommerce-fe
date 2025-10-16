@@ -6,61 +6,19 @@ import { mockOrders } from "@/mock/orders";
 export const ordersApi = {
   getOrders: async (params: OrdersRequest): Promise<OrdersResponse> => {
     try {
-      // const queryParams = new URLSearchParams({
-      //   page: params.page.toString(),
-      //   size: params.size.toString(),
-      //   search: params.search?.trim() || "",
-      // });
-      // const response = await http.get<OrdersResponse>(
-      //   `/api/orders?${queryParams.toString()}`
-      // );
-      // return response.data;
-
-      const { page, size, search, status, startDate, endDate } = params;
-
-      let filteredOrders = [...mockOrders];
-
-      if (search) {
-        const searchLower = search.toLowerCase();
-        filteredOrders = filteredOrders.filter(
-          (order) =>
-            order.customerName.toLowerCase().includes(searchLower) ||
-            order.id.toLowerCase().includes(searchLower) ||
-            order.email.toLowerCase().includes(searchLower)
-        );
-      }
-
-      if (status) {
-        filteredOrders = filteredOrders.filter(
-          (order) => order.status === status
-        );
-      }
-
-      if (startDate && endDate) {
-        filteredOrders = filteredOrders.filter((order) => {
-          const orderDate = new Date(order.date);
-          return orderDate >= startDate && orderDate <= endDate;
-        });
-      }
-
-      const totalItems = filteredOrders.length;
-      const totalPages = Math.ceil(totalItems / size);
-
-      const startIndex = (page - 1) * size;
-      const paginatedOrders = filteredOrders.slice(
-        startIndex,
-        startIndex + size
+      const queryParams = new URLSearchParams({
+        page: params.page.toString(),
+        size: params.size.toString(),
+        search: params.search?.trim() || "",
+        orderStatus: params.orderStatus || "",
+        paymentStatus: params.paymentStatus || "",
+        endDate: params.endDate ? params.endDate : "",
+        startDate: params.startDate ? params.startDate : "",
+      });
+      const response = await http.get<OrdersResponse>(
+        `/api/orders?${queryParams.toString()}`
       );
-
-      return {
-        data: paginatedOrders,
-        pagination: {
-          page,
-          size,
-          totalPages,
-          totalItems,
-        },
-      };
+      return response.data;
     } catch (error: unknown) {
       const message = handleApiError(error, "Failed to fetch orders");
       console.error("❌ Orders API error:", message);

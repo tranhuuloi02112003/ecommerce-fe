@@ -8,21 +8,24 @@ export interface OrderProduct {
 export interface Order {
   id: string;
   customerName: string;
-  email: string;
-  date: Date;
-  status: "pending" | "delivered" | "processing" | "canceled";
-  total: number;
-  products: OrderProduct[];
-  address: string;
+  customerPhone: string;
+  createdAt: Date;
+  totalItems: number;
+  totalAmount: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  orderStatus: string;
 }
 
 export interface OrdersRequest {
   page: number;
   size: number;
   search?: string;
-  startDate?: Date;
-  endDate?: Date;
-  status?: string;
+  startDate?: string;
+  endDate?: string;
+  orderStatus?: string;
+  paymentStatus?: string;
+  paymentMethod?: string;
 }
 
 export interface OrdersResponse {
